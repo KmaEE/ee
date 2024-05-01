@@ -31,7 +31,7 @@ And line equation $
 y = m(x-x_1) + y_1
 $
 
-We substitude this into the equation of the curve:
+We substitute this into the equation of the curve:
 
 $
 (m(x-x_1) + y_1)^2 = x^3 + A x + B
@@ -49,9 +49,64 @@ $
 x_3 = m^2 - x_1 - x_2
 $
 
-In the group law, the $y$ coordinate of the resulting point is flipped: (TODO: why?)
+In the group law, the $y$ coordinate of the resulting point is flipped: (TODO: explain why)
 
 $
 y_3 = -(m(x_3 - x_1) + y_1) =m(x_1-x_3) -y_1
 $
+
+Therefore, we have arrived at $P_3 = (x_3, y_3)$, a third point distinct from $P_1$ and $P_2$.
+
+If only one point $P_1 = (x_1, y_1)$ is known, we can use implicit differentiation to find the tangent line:
+
+$
+y^2 = x^3 + A x + B\
+2 y (dif y)/(dif x) = 3x^2 + A\
+m = (dif y)/(dif x) = (3x^2 + A)/(2y) = (3x_1^2 + A)/(2 y_1)
+$
+
+With the same line equation $y = m(x - x_1) + y_1$, with the same expanded formula:
+
+$
+x^3 - m^2 x^2 + ... = 0
+$
+
+But this time, $x_1$ is a repeated root, as a tangent line either touches no other points at all (the case when $y = 0$) or touch one other point.
+
+Therefore, we can find the third point with
+
+$
+x_3 = m^2 - 2 x_1
+$
+
+And $
+y_3 = -(m(x_3 - x_1) + y_1) = m(x_1 - x_3) - y_1
+$
+
+Therefore, we can begin to define a group law for points on elliptic curves.
+
+Let $C: y^2 = x^3 + A x + B$ be the elliptic curve with the set of points that satisfy the given equation. We now show that $C union {infinity}$ forms a group.
+
+Let $P_1 = (x_1, y_1)$ and $P_2 = (x_2, y_2)$ be two points that are on the curve. Define $P_3 = P_1 + P_2$ to be as follows:
+
+- If $P_1 = P_2 = (x_1, y_1)$, let $
+
+P_3 = (m^2 - 2x_1, m(x_1-x_3)-y_1), "where " m = (3x_1^2 + A)/(2y_1)
+
+$
+- If $x_1 = x_2$ but $y_1 != y_2$ (N.B. the only case where this happens is $y_1 = -y_2$): let $P_3 = infinity$.
+- Otherwise, let $
+P_3 = (m^2 - x_1 - x_2, m(x_1-x_3)-y_1), "where " m = (y_2-y_1)/(x_2-x_1)
+$
+
+Additionally, define $P_1 + infinity = infinity + P_1 = P_1$, as well as $infinity + infinity = infinity$.
+
+Proof that $C union {infinity}$ forms a group:
+
+1. The operation $+$ is well-defined for any points $P_a + P_b$ where $P_a, P_b in C union {infinity}$ as above.
+2. $infinity$ is the identity element, where $P_a + infinity = P_a$ for all $P_a in C union {infinity}$.
+3. Every element has an inverse: let $P_a = (x, y)$, its inverse is $-P_a = (x, -y)$. TODO show that $-P_a in C$.
+4. The operation is associative, where $(P_1 + P_2) + P_3 = P_1 + (P_2 + P_3)$. This is shown in chapter 2.4 in the book titled "Elliptic Curves: Number Theory and Cryptography", and the proof gets too long, so we have omitted it here.
+
+
 
