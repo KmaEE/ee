@@ -11,11 +11,35 @@ TLS has many different cryptographic techniques to establishing a secure connect
 As a consequence of Fermat's Little Theorem, we can write:
 // todo spacing
 $
-a^(p-1) equiv 1 (mod p)\
-a dot a^(p-2) equiv 1 (mod p)
+a^(p-1) equiv 1 " " (mod p)\
+a dot a^(p-2) equiv 1 " " (mod p)
 $
 
-For any integer $a$ and prime $p$. We have found $a^(p-2)$ as $a$'s multiplicative inverse, therefore integers modulo $p$ with multiplication forms a group, as the operation is associative, has an identity element, and every element has an inverse.
+For any integer $a$ and prime $p$. We have found $a^(p-2)$ as $a$'s multiplicative inverse, therefore integers modulo $p$ with multiplication forms a group, as the operation is associative, has an identity element, and every element has an inverse. This group is represented with the symbol $(ZZ \/ p ZZ)^times$.
+
+Given $a$ and $b$ are non-zero integers from this group, the discrete log problem asks us to find $k$ such that
+
+$
+a^k equiv b " " (mod p)
+$
+
+The assumption is that this problem is difficult to compute if the group and the exponent are well-chosen. This is used as the _trapdoor function_ in cryptography, as it is assumed to be easy to compute in one direction and hard to compute in the other. We'll evaluate the extent to which this claim is true for $(ZZ \/ p ZZ)^times$ in later sections, but we'll start with this assumption.
+
+== Diffie-Hellman Key Exchange
+
+When two people communicate through the Internet, they must do so through their internet service providers (ISPs). In the case of a public network, there may be malicious people pretending to be the router, thus making it so that your internet traffic goes through them. This is called a man-in-the-middle attack. // TODO(This needs to be revised)
+
+If the information being communicated is encrypted, then man-in-the-middle attacks would not work. Common encryption algorithms require the people involved to have a *shared secret*, for example a string of characters that only the two parties know. This is hard to do when the only form of communication is through an *insecure channel*, as in the case of internet connections. The Diffie-Hellman Key Exchange proposes a way to establish a shared secret even if the only channel to communicate in is insecure through the difficulty of the discrete log problem.
+
+The mechanism is as follows:
+
+Given a known base $g$ in a group $G$ (with exponentiation meaning repeated application of the group operation), Alice can establish a shared secret with Bob by generating secret integers. Alice can secretly generate $a$ and send Bob $g^a$, while Bob can secretly generate $b$ and send Alice $g^b$.
+
+Alice can then compute $(g^b)^a$ and Bob can compute $(g^a)^b$. As both of these are equivalent to multiplying $g$ to itself $a b$ times, $(g^b)^a=(g^a)^b=g^(a b)$ can be used as the shared secret.
+
+Because only $g$, $g^a$, and $g^b$ are sent across the channel, any third party observer will not be able to compute $g^(a b)$ without solving the discrete log problem to determine $a$ or $b$. As we have assumed that the discrete log problem is difficult, this is a secure way for Alice to establish a shared secret with Bob if the only form of communication between the two is insecure.
+
+
 
 == Elliptic curves
 

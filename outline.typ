@@ -9,4 +9,11 @@
   - Hashing that shared secret to be used as a shared secret for https.
 - Useful for establishing secure connection to online banking, hide the contents that you see from your internet service provider, provides privacy.
 - Elliptic curve is also more secure - ref https://en.wikipedia.org/wiki/Logjam_(computer_security) Logjam
+ - logjam talks about imperfect forward secrecy
+ - https://crypto.stackexchange.com/questions/70464/what-is-the-actual-result-of-a-logjams-dh-attack
+- https://crypto.stackexchange.com/questions/52618/why-do-elliptic-curves-require-fewer-bits-for-the-same-security-level
 
+
+- Some notes
+ - Should have balance between text, math, and visuals
+ - A good strategy is to use some examples
