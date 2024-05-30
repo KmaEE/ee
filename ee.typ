@@ -1,4 +1,17 @@
+#show par: set block(spacing: 1.5em)
+#set par(
+  justify: true,
+  leading: 0.75em
+)
+
+
 = How can elliptic curves be used to establish a shared secret over an insecure channel?
+
+#pagebreak()
+
+#outline()
+
+#pagebreak()
 
 == Introduction
 // TODO cite
@@ -15,6 +28,7 @@ a^(p-1) equiv 1 " " (mod p)\
 a dot a^(p-2) equiv 1 " " (mod p)
 $
 
+// TODO cite
 For any integer $a$ and prime $p$. We have found $a^(p-2)$ as $a$'s multiplicative inverse, therefore integers modulo $p$ with multiplication forms a group, as the operation is associative, has an identity element, and every element has an inverse. This group is represented with the symbol $(ZZ \/ p ZZ)^times$.
 
 Given $a$ and $b$ are non-zero integers from this group, the discrete log problem asks us to find $k$ such that
