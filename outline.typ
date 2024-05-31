@@ -17,3 +17,5 @@
 - Some notes
  - Should have balance between text, math, and visuals
  - A good strategy is to use some examples
+
+- https://en.wikipedia.org/wiki/Security_level

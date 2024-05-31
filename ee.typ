@@ -1,3 +1,4 @@
+#import "@preview/cetz:0.2.2"
 #show par: set block(spacing: 1.5em)
 #set par(
   justify: true,
@@ -5,7 +6,7 @@
 )
 
 
-= How can elliptic curves be used to establish a shared secret over an insecure channel?
+= To what extent can elliptic curves be used to establish a shared secret over an insecure channel?
 
 #pagebreak()
 
@@ -45,6 +46,7 @@ When two people communicate through the Internet, they must do so through their 
 
 If the information being communicated is encrypted, then man-in-the-middle attacks would not work. Common encryption algorithms require the people involved to have a *shared secret*, for example a string of characters that only the two parties know. This is hard to do when the only form of communication is through an *insecure channel*, as in the case of internet connections. The Diffie-Hellman Key Exchange proposes a way to establish a shared secret even if the only channel to communicate in is insecure through the difficulty of the discrete log problem.
 
+// TODO maybe too much math here
 The mechanism is as follows:
 
 Given a known base $g$ in a group $G$ (with exponentiation meaning repeated application of the group operation), Alice can establish a shared secret with Bob by generating secret integers. Alice can secretly generate $a$ and send Bob $g^a$, while Bob can secretly generate $b$ and send Alice $g^b$.
@@ -53,6 +55,14 @@ Alice can then compute $(g^b)^a$ and Bob can compute $(g^a)^b$. As both of these
 
 Because only $g$, $g^a$, and $g^b$ are sent across the channel, any third party observer will not be able to compute $g^(a b)$ without solving the discrete log problem to determine $a$ or $b$. As we have assumed that the discrete log problem is difficult, this is a secure way for Alice to establish a shared secret with Bob if the only form of communication between the two is insecure.
 
+#align(center, cetz.canvas({
+  import cetz.draw: *
+  content((0, 0), (2, 1), box(align(center, par[Alice]),
+stroke: 1pt, width: 100%, height: 100%, inset: 1em))
+  content((7, 0), (9, 1), box(align(center, par[Bob]),
+stroke: 1pt, width: 100%, height: 100%, inset: 1em))
+  // TODO finish this
+}))
 
 
 == Elliptic curves
