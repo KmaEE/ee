@@ -14,6 +14,31 @@
 
 #pagebreak()
 
+== Group Theory
+
+Addition within the set of integers satisfy certain algebraic properties:
+
+1. There exists an identity. For addition, $0$ is the identity becuase $0 + a = a$.
+2. The operation is associative, where $(a + b) + c = a + (b + c)$.
+3. Every element has an inverse that is also within the set. For any $a in ZZ$, $-a$ is its inverse because $a + (-a) = 0$ where $0$ is the identity element.
+4. Closure. For any $a, b in ZZ$, we have $a + b in ZZ$ as well, therefore the operation will never output a value that leaves the $ZZ$ set.
+
+These four conditions satisfy the requirements for a _group_. We can say that the set of $ZZ$ forms a group under addition. Note that $ZZ$ does _not_ form a group under multiplication, because although it satisfies three of the properties: $1$ is the identity, the operation is associative, and for all $a,b in ZZ, a b in ZZ$ (closure), the inverse property is not satisfied.
+
+For $2$ to have an inverse, there would need to be $a in ZZ$ such that $2  times a = 1$, the identity element. Such an $a$ doesn't exist when $a$ needs to be an integer.
+
+However, we can restrict our set to make it form a group. Consider the numbers ${1, 2, 3, .., n - 1}$ with multiplication modulo $n$, where $n$ is a prime number. We will write this set as $ZZ_n$.
+
+For any $a in ZZ_n$, we have $1 times a = a$, therefore $1$ can be considered as the identity element. The operation is associative in the same way multiplication is associative, with the assumption that multiplying two numbers modulo $n$ is equivalent to multiplying in $ZZ$ then finding the result modulo $n$. Then, as $(a b)c = a(b c)$, we can say $(a b) c = a (b c) " "(mod n)$.
+
+Finding an inverse for an element in $ZZ_n$ requires the use of Fermat's Little Theorem, which states
+
+$
+a^(n-1) equiv 1 " "(mod n)
+$
+
+when $n$ is prime. Then, we can write $a times a^(n-2) equiv 1 " "(mod n)$. For any $a in ZZ_n$, $a^(n-2)$ is its inverse as the product of $a$ and $a^(n-2)$ gives the identity. It's trivial to show that $ZZ_n$ is closed under multiplication, therefore we can state that the set of non-zero integers modulo $n$ forms a group under multiplication.
+
 == Introduction
 // TODO cite
 Internet connections and data go through Internet Service Providers (ISP) which snoop on users' information. [citation needed] An often used method to prevent eavesdropping is through TLS, commonly known as the green padlock next to the address bar or HTTPS, [citation needed] which establishes a secure connection between the user and the website that they are connecting to, such that the ISP only knows which website they have connected to but does not know the content that the user has downloaded or uploaded.
@@ -30,7 +55,61 @@ a dot a^(p-2) equiv 1 " " (mod p)
 $
 
 // TODO cite
-For any integer $a$ and prime $p$. We have found $a^(p-2)$ as $a$'s multiplicative inverse, therefore integers modulo $p$ with multiplication forms a group, as the operation is associative, has an identity element, and every element has an inverse. This group is represented with the symbol $(ZZ \/ p ZZ)^times$.
+For any integer $a$ and prime $p$. We have found $a^(p-2)$ as $a$'s multiplicative inverse, therefore integers modulo $p$ with multiplication forms a group, as the operation is associative, has an identity element, and every element has an inverse. This group is represented with the symbol $ZZ_p^times$.
+
+Given a base $37$ and a value $200$, we can ask the following question:
+
+$
+17^n equiv 24 " "(mod 1009)
+$
+
+A method named pollard's $rho$ algorithm exists which we can use to find the answer. First, we generate random integers as exponents and write $M$:
+
+$
+M_1 = (17)^5 (24)^11\
+M_2 = (17)^20 (24)^7\
+M_3 = (17)^13 (24)^6\
+M_4 = (17)^11 (24)^16\
+M_5 = (17)^3 (24)^12
+$
+
+// todo probably rename P to x
+
+Then, define $
+f(x) = x M_i "if " x equiv i " " (mod 5)
+$
+
+This essentially gives a "random walk" of the group. Choose $P_0 = (17^3)(24^14)$, then define $
+P_(n+1) = f(P_n)
+$
+
+We note that $P_61 = P_99 = 340$. If we kept track of the exponents on $17$ and $24$ in the calculations, we get
+
+$
+P_61 = (17^691)(24^704) = (17^1075)(24^1132) = P_99
+$
+
+Then
+
+$
+17^(-384) = 24^(428)
+$
+
+Rewrite $24 = 17^k$
+
+$
+17^(-384) = 17^(428k)\
+17^(428k + 384) = 1
+$
+
+Note that $17$ has order $1008$ in the multiplicative group modulo 1009, therefore we write
+
+$
+428 k + 384 = 0 " "(mod 1008)
+$
+
+// TODO
+(pollards rho, from Washington)
 
 Given $a$ and $b$ are non-zero integers from this group, the discrete log problem asks us to find $k$ such that
 
@@ -38,7 +117,8 @@ $
 a^k equiv b " " (mod p)
 $
 
-The assumption is that this problem is difficult to compute if the group and the exponent are well-chosen. This is used as the _trapdoor function_ in cryptography, as it is assumed to be easy to compute in one direction and hard to compute in the other. We'll evaluate the extent to which this claim is true for $(ZZ \/ p ZZ)^times$ in later sections, but we'll start with this assumption.
+
+The assumption is that this problem is difficult to compute if the group and the exponent are well-chosen. This is used as the _trapdoor function_ in cryptography, as it is assumed to be easy to compute in one direction and hard to compute in the other. We'll evaluate the extent to which this claim is true for $ZZ_p^times$ in later sections, but we'll start with this assumption.
 
 == Diffie-Hellman Key Exchange
 
