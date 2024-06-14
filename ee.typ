@@ -57,11 +57,13 @@ $
 // TODO cite
 For any integer $a$ and prime $p$. We have found $a^(p-2)$ as $a$'s multiplicative inverse, therefore integers modulo $p$ with multiplication forms a group, as the operation is associative, has an identity element, and every element has an inverse. This group is represented with the symbol $ZZ_p^times$.
 
-Given a base $37$ and a value $200$, we can ask the following question:
+Given a base $17$ and a value $24$, we can ask the following question:
 
 $
 17^n equiv 24 " "(mod 1009)
 $
+
+This is called the Discrete Log Problem in $ZZ_p^times$, and in this case $p = 1009$. It is an open cryptographic problem to be able to solve this problem in large $p$ quickly. 
 
 A method named pollard's $rho$ algorithm exists which we can use to find the answer. First, we generate random integers as exponents and write $M$:
 
