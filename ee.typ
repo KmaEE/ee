@@ -6,17 +6,44 @@
 )
 
 
-= To what extent can elliptic curves be used to establish a shared secret over an insecure channel?
+#heading(outlined: false)[To what extent can elliptic curves be used to establish a shared secret over an insecure channel?]
 
 #pagebreak()
 
-#outline()
+#outline(indent: 2em)
 
 #pagebreak()
 
-== Group Theory
+= Group Theory
 
-Addition within the set of integers satisfy certain algebraic properties:
+== $ZZ_p^times$: The Multiplicative Group Over a Prime
+
+Fermat's Little Theorem suggests the following to be true for any integer $a$ and prime $p$:
+
+$
+a^(p-1) equiv 1 " " (mod p)
+$
+
+Extracting a factor of $a$, we get
+
+$
+a dot a^(p-2) equiv 1 " " (mod p)
+$
+
+Thus, under multiplication modulo $p$, any integer $a$ multiplied by $a^(p-2)$ results in 1. As 1 is the multiplicative identity ($1 dot x = x$), $a^(p-2)$ is said to be $a$'s _multiplicative inverse_. Consider the numbers from $1$ to $p - 1$. Every number has a multiplicative inverse modulo $p$, and $1$ is the identity element as shown above. Further more, multiplication is associative ($a dot (b dot c) = (a dot b) dot c$) and each multiplication will always result in a number between $1$ to $p - 1$ since it is performed modulo $p$. These properties (existence of an identity element and inverses, associativity and closure of operations) form a group.
+
+== The Discrete Log Problem
+
+Under a specific group $ZZ_1009^times$, we ask for an integer $n$ for which $17^n = 24$. In this case,
+
+$
+17^(456) equiv 24 " " (mod 1009)
+$
+
+Therefore $n = 456$ is the solution to this question.
+
+
+/* Addition within the set of integers satisfy certain algebraic properties:
 
 1. There exists an identity. For addition, $0$ is the identity becuase $0 + a = a$.
 2. The operation is associative, where $(a + b) + c = a + (b + c)$.
@@ -37,7 +64,7 @@ $
 a^(n-1) equiv 1 " "(mod n)
 $
 
-when $n$ is prime. Then, we can write $a times a^(n-2) equiv 1 " "(mod n)$. For any $a in ZZ_n$, $a^(n-2)$ is its inverse as the product of $a$ and $a^(n-2)$ gives the identity. It's trivial to show that $ZZ_n$ is closed under multiplication, therefore we can state that the set of non-zero integers modulo $n$ forms a group under multiplication.
+when $n$ is prime. Then, we can write $a times a^(n-2) equiv 1 " "(mod n)$. For any $a in ZZ_n$, $a^(n-2)$ is its inverse as the product of $a$ and $a^(n-2)$ gives the identity. It's trivial to show that $ZZ_n$ is closed under multiplication, therefore we can state that the set of non-zero integers modulo $n$ forms a group under multiplication. 
 
 == Introduction
 // TODO cite
@@ -120,7 +147,9 @@ a^k equiv b " " (mod p)
 $
 
 
-The assumption is that this problem is difficult to compute if the group and the exponent are well-chosen. This is used as the _trapdoor function_ in cryptography, as it is assumed to be easy to compute in one direction and hard to compute in the other. We'll evaluate the extent to which this claim is true for $ZZ_p^times$ in later sections, but we'll start with this assumption.
+The assumption is that this problem is difficult to compute if the group and the exponent are well-chosen. This is used as the _trapdoor function_ in cryptography, as it is assumed to be easy to compute in one direction and hard to compute in the other. We'll evaluate the extent to which this claim is true for $ZZ_p^times$ in later sections, but we'll start with this assumption. */
+
+= Finite Field Cryptography and Attacks
 
 == Diffie-Hellman Key Exchange
 
@@ -147,7 +176,8 @@ stroke: 1pt, width: 100%, height: 100%, inset: 1em))
 }))
 
 
-== Elliptic curves
+
+= Elliptic Curve Cryptography
 
 Let an elliptic curve be denoted by the equation $y^2 = x^3 + A x + B$ where $A$ and $B$ are constants. Note that the curve is symmetric about the $x$-axis, since if $(x,y)$ is a point on the curve, $(x,-y)$ is also on the curve.
 
@@ -231,12 +261,89 @@ $
 
 Additionally, define $P_1 + infinity = infinity + P_1 = P_1$, as well as $infinity + infinity = infinity$.
 
-Proof that $C union {infinity}$ forms a group:
+Perhaps the most surprising result of defining this operation is that the operation is associative, that is, $(P_1 + P_2) + P_3 = P_1 + (P_2 + P_3)$ for any three points $P_1, P_2, P_3$ that belong to the set $C union { infinity }$. Proving this algebraicly becomes very tedious, but there is a geometric argument using cubics and Bézout's theorem for the case where the points are distinct and none of them have the same $x$ value.
+
+== Proof of Associativity
+
+Bézout's theorem states that in general two plane curves given in the equations $a(x, y) = 0$ and $b(x, y) = 0$ with degrees $d_a$ and $d_b$ will have $d_a d_b$ intersections. 
+
+Formally, the group of elliptic curves can be defined in projective space where the point at infinity can be treated like any other point. For ease of presentation, the point at infinity will be denote as $O$.
+
+#image("Screenshot_20240626_152533.png")
+
+Note that the intersections between the blue lines and the curve are $(P+Q)*R$, $P$, $Q$, $R$, $Q*R$, $Q+R$, $P*R$, $P+Q$, and $O$.
+
+The intersections between the black lines and the elliptic curve are $P * (Q + R)$, $P$, $Q$, $R$, $Q*R$, $Q+R$, $P*R$, $P+Q$, and $O$.
+
+As three lines form a cubic, and the two groups of three lines both intersect the same eight out of the nine points with the elliptic curve, it can be shown that the ninth point is the same for both cubics that intersect with the elliptic curve, thus proving that $(P+Q)*R = P * (Q + R)$.
+
+== Group of elliptic curve points
+
+Therefore, $C union {infinity}$ forms a group since:
 
 1. The operation $+$ is well-defined for any points $P_a + P_b$ where $P_a, P_b in C union {infinity}$ as above.
 2. $infinity$ is the identity element, where $P_a + infinity = P_a$ for all $P_a in C union {infinity}$.
-3. Every element has an inverse: let $P_a = (x, y)$, its inverse is $-P_a = (x, -y)$. TODO show that $-P_a in C$.
-4. The operation is associative, where $(P_1 + P_2) + P_3 = P_1 + (P_2 + P_3)$. This is shown in chapter 2.4 in the book titled "Elliptic Curves: Number Theory and Cryptography", and the proof gets too long, so we have omitted it here.
+3. Every element has an inverse: let $P_a = (x, y)$, its inverse is $-P_a = (x, -y)$. We know that $-P_a in C$ since the curve is given as $y^2 = x^3 + A x + B$ and swapping $y$ with $-y$ will still hold.
+4. The operation is associative.
 
+Since elliptic curve points form a group, cryptographic techniques such as diffie-hellman key exchange which relies on group operations can also be applied to elliptic curves.
 
+== Elliptic curve diffie-hellman
 
+One important difference between elliptic curve operations and modular multiplicative group operations is in notation. In elliptic curve, the operation is commonly represented as addition of two points. Therefore $A + B$ is the normal operation on two points $A$ and $B$ while $k A$ is the operation repeated (e.g. $2A = A + A$). In the multiplicative group modulo $p$, the correspondence goes to $A B$ and $A^k$. Thus, in previous sections about the multiplicative groups, an operation such as $A^k$ will now be written as $k A$ in the context of elliptic curves.
+
+With that note, diffie-hellman in elliptic curves follows the exact same procedure: two parties agree on a curve group to use, then decide on a base point $G$. Alice generates a secret integer $a$ and sends Bob $a G$. Bob generates a secret integer $b$ and sends Alice $b G$. They can now both calculate $a b G$, which cannot be known by third parties unless they can solve the discrete log problem in elliptic curves.
+
+// TODO: Example
+
+== Finding the Discrete Log with Pollard's $rho$ algorithm
+
+Pollard's $rho$ algorithm is a general algorithm for solving the discrete log problem for any abelian group. It is less efficient than the general number field sieve on discrete log in finite fields, taking $sqrt(N)$ on average with $N$ being the order of the group.
+
+We first take an example adapted from page 164 of Silverman and Tate's book: $y^2 = x^3 + 6692x + 9667$, in $F_10037$, with $P = (3354, 7358)$, $Q = (5403, 5437)$. Find $k$ such that $k P = Q$.
+
+Generate 10 random points on the curve based on multiples of $P$ and $Q$:
+
+// TODO make these occupy less space.
+$
+M_0 = 42P + 37Q\
+M_1 = 21P + 12Q\
+M_2 = 25P + 20Q\
+M_3 = 39P + 15Q\
+M_4 = 23P + 29Q\
+M_5 = 45P + 25Q\
+M_6 = 14P + 37Q\
+M_7 = 30P + 12Q\
+M_8 = 45P + 49Q\
+M_9 = 40P + 45Q\
+$
+
+Then pick, in the same way, a random initial point:
+
+$
+A_0 = 15P + 36Q = (7895, 3157)
+$
+
+Then, choose an $M_i$ point to add to based on the ones digit of the $x$ coordinate of the point. As $A_0$ has $x = 7895$, $A_1 = A_0 + M_5 = (7895, 3157) + (5361, 3335) = (6201, 273)$.
+
+Formally, define $
+A_(n+1) = A_n + M_i" where " i equiv x_n" (mod 10)"
+$
+
+for $A_n = (x_n,y_n)$.  The choice of random $M_i$ points creates a kind of "random walk" of the points in the elliptic curve. As we keep calculating, we get:
+
+$
+A_0 = (7895, 3157), A_1 = (6201, 273), ..., A_95 = (170, 7172), A_96 = (7004, 514), ..., A_100 = (170, 7172), A_101 = (7004, 514) 
+$
+
+We reach a cycle with $A_95 = A_100$. Since we know the multiples of $P$ and $Q$ for all of the $M_i$ points and thus all $A_n$ points, keeping track of them gives us $A_95 = 3126P + 2682Q$, we also have $A_100 = 3298P + 2817Q$. With $3126P + 2682Q = 3298P + 2817Q$, we have:
+
+$
+infinity = 172P + 135Q = (172 + 135n)P\
+172 + 135n equiv 0" (mod 10151)"
+n equiv 1277 (mod 10151)
+$
+
+With verification, we indeed have $1277P = Q$.
+
+Pollard's $rho$ algorithm works on average with $O(sqrt(N))$ time with $|P| = N$.
