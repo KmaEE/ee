@@ -1,0 +1,334 @@
+[
+	{
+		"id": "http://zotero.org/users/11492857/items/YXN7UE3X",
+		"type": "book",
+		"call-number": "QA567.2.E44 W37 2008",
+		"collection-title": "Discrete mathematics and its applications",
+		"edition": "2nd ed",
+		"event-place": "Boca Raton, FL",
+		"ISBN": "978-1-4200-7146-7",
+		"language": "en",
+		"note": "OCLC: ocn192045762",
+		"number-of-pages": "513",
+		"publisher": "Chapman & Hall/CRC",
+		"publisher-place": "Boca Raton, FL",
+		"source": "Library of Congress ISBN",
+		"title": "Elliptic Curves: Number Theory and Cryptography",
+		"title-short": "Elliptic Curves",
+		"author": [
+			{
+				"family": "Washington",
+				"given": "Lawrence C."
+			}
+		],
+		"issued": {
+			"date-parts": [
+				[
+					"2008"
+				]
+			]
+		}
+	},
+	{
+		"id": "http://zotero.org/users/11492857/items/YA9AYZS3",
+		"type": "book",
+		"collection-title": "The Student Mathematical Library",
+		"event-place": "Providence, Rhode                     Island",
+		"ISBN": "978-1-4704-3582-0",
+		"language": "en",
+		"note": "DOI: 10.1090/stml/083",
+		"publisher": "American Mathematical                     Society",
+		"publisher-place": "Providence, Rhode                     Island",
+		"title": "Modern Cryptography and Elliptic Curves",
+		"URL": "http://www.ams.org/stml/083",
+		"volume": "83",
+		"author": [
+			{
+				"family": "Shemanske",
+				"given": "Thomas"
+			}
+		],
+		"accessed": {
+			"date-parts": [
+				[
+					"2023",
+					7,
+					2
+				]
+			]
+		},
+		"issued": {
+			"date-parts": [
+				[
+					"2017",
+					7,
+					31
+				]
+			]
+		}
+	},
+	{
+		"id": "http://zotero.org/users/11492857/items/MRGA2U2S",
+		"type": "book",
+		"collection-title": "Undergraduate Texts in Mathematics",
+		"event-place": "Cham",
+		"ISBN": "978-3-319-18587-3",
+		"language": "en",
+		"note": "DOI: 10.1007/978-3-319-18588-0",
+		"publisher": "Springer International Publishing",
+		"publisher-place": "Cham",
+		"title": "Rational Points on Elliptic Curves",
+		"URL": "https://link.springer.com/10.1007/978-3-319-18588-0",
+		"author": [
+			{
+				"family": "Silverman",
+				"given": "Joseph H."
+			},
+			{
+				"family": "Tate",
+				"given": "John T."
+			}
+		],
+		"accessed": {
+			"date-parts": [
+				[
+					"2023",
+					7,
+					3
+				]
+			]
+		},
+		"issued": {
+			"date-parts": [
+				[
+					"2015"
+				]
+			]
+		}
+	},
+	{
+		"id": "http://zotero.org/users/11492857/items/DFLQ25CK",
+		"type": "report",
+		"abstract": "This memo specifies two elliptic curves over prime fields that offer a high level of practical security in cryptographic applications, including Transport Layer Security (TLS). These curves are intended to operate at the \\textasciitilde128-bit and \\textasciitilde224-bit security level, respectively, and are generated deterministically based on a list of required properties.",
+		"genre": "Request for Comments",
+		"note": "DOI: 10.17487/RFC7748\nnumber-of-pages: 22",
+		"number": "RFC 7748",
+		"publisher": "Internet Engineering Task Force",
+		"source": "IETF",
+		"title": "Elliptic Curves for Security",
+		"URL": "https://datatracker.ietf.org/doc/rfc7748",
+		"author": [
+			{
+				"family": "Langley",
+				"given": "Adam"
+			},
+			{
+				"family": "Hamburg",
+				"given": "Mike"
+			},
+			{
+				"family": "Turner",
+				"given": "Sean"
+			}
+		],
+		"accessed": {
+			"date-parts": [
+				[
+					"2023",
+					11,
+					23
+				]
+			]
+		},
+		"issued": {
+			"date-parts": [
+				[
+					"2016",
+					1
+				]
+			]
+		}
+	},
+	{
+		"id": "http://zotero.org/users/11492857/items/XIP79TYT",
+		"type": "report",
+		"abstract": "This document describes key exchange algorithms based on Elliptic Curve Cryptography (ECC) for the Transport Layer Security (TLS) protocol. In particular, it specifies the use of Ephemeral Elliptic Curve Diffie-Hellman (ECDHE) key agreement in a TLS handshake and the use of the Elliptic Curve Digital Signature Algorithm (ECDSA) and Edwards-curve Digital Signature Algorithm (EdDSA) as authentication mechanisms. This document obsoletes RFC 4492.",
+		"genre": "Request for Comments",
+		"note": "DOI: 10.17487/RFC8422\nnumber-of-pages: 34",
+		"number": "RFC 8422",
+		"publisher": "Internet Engineering Task Force",
+		"source": "IETF",
+		"title": "Elliptic Curve Cryptography (ECC) Cipher Suites for Transport Layer Security (TLS) Versions 1.2 and Earlier",
+		"URL": "https://datatracker.ietf.org/doc/rfc8422",
+		"author": [
+			{
+				"family": "Nir",
+				"given": "Yoav"
+			},
+			{
+				"family": "Josefsson",
+				"given": "Simon"
+			},
+			{
+				"family": "Pégourié-Gonnard",
+				"given": "Manuel"
+			}
+		],
+		"accessed": {
+			"date-parts": [
+				[
+					"2023",
+					11,
+					25
+				]
+			]
+		},
+		"issued": {
+			"date-parts": [
+				[
+					"2018",
+					8
+				]
+			]
+		}
+	},
+	{
+		"id": "http://zotero.org/users/11492857/items/LCY3U895",
+		"type": "paper-conference",
+		"abstract": "We investigate the security of Diffie-Hellman key exchange as used in popular Internet protocols and find it to be less secure than widely believed. First, we present Logjam, a novel flaw in TLS that lets a man-in-the-middle downgrade connections to \"export-grade\" Diffie-Hellman. To carry out this attack, we implement the number field sieve discrete log algorithm. After a week-long precomputation for a specified 512-bit group, we can compute arbitrary discrete logs in that group in about a minute. We find that 82% of vulnerable servers use a single 512-bit group, allowing us to compromise connections to 7% of Alexa Top Million HTTPS sites. In response, major browsers are being changed to reject short groups. We go on to consider Diffie-Hellman with 768- and 1024-bit groups. We estimate that even in the 1024-bit case, the computations are plausible given nation-state resources. A small number of fixed or standardized groups are used by millions of servers; performing precomputation for a single 1024-bit group would allow passive eavesdropping on 18% of popular HTTPS sites, and a second group would allow decryption of traffic to 66% of IPsec VPNs and 26% of SSH servers. A close reading of published NSA leaks shows that the agency's attacks on VPNs are consistent with having achieved such a break. We conclude that moving to stronger key exchange methods should be a priority for the Internet community.",
+		"collection-title": "CCS '15",
+		"container-title": "Proceedings of the 22nd ACM SIGSAC Conference on Computer and Communications Security",
+		"DOI": "10.1145/2810103.2813707",
+		"event-place": "New York, NY, USA",
+		"ISBN": "978-1-4503-3832-5",
+		"page": "5–17",
+		"publisher": "Association for Computing Machinery",
+		"publisher-place": "New York, NY, USA",
+		"source": "ACM Digital Library",
+		"title": "Imperfect Forward Secrecy: How Diffie-Hellman Fails in Practice",
+		"title-short": "Imperfect Forward Secrecy",
+		"URL": "https://dl.acm.org/doi/10.1145/2810103.2813707",
+		"author": [
+			{
+				"family": "Adrian",
+				"given": "David"
+			},
+			{
+				"family": "Bhargavan",
+				"given": "Karthikeyan"
+			},
+			{
+				"family": "Durumeric",
+				"given": "Zakir"
+			},
+			{
+				"family": "Gaudry",
+				"given": "Pierrick"
+			},
+			{
+				"family": "Green",
+				"given": "Matthew"
+			},
+			{
+				"family": "Halderman",
+				"given": "J. Alex"
+			},
+			{
+				"family": "Heninger",
+				"given": "Nadia"
+			},
+			{
+				"family": "Springall",
+				"given": "Drew"
+			},
+			{
+				"family": "Thomé",
+				"given": "Emmanuel"
+			},
+			{
+				"family": "Valenta",
+				"given": "Luke"
+			},
+			{
+				"family": "VanderSloot",
+				"given": "Benjamin"
+			},
+			{
+				"family": "Wustrow",
+				"given": "Eric"
+			},
+			{
+				"family": "Zanella-Béguelin",
+				"given": "Santiago"
+			},
+			{
+				"family": "Zimmermann",
+				"given": "Paul"
+			}
+		],
+		"accessed": {
+			"date-parts": [
+				[
+					"2024",
+					2,
+					23
+				]
+			]
+		},
+		"issued": {
+			"date-parts": [
+				[
+					"2015",
+					10,
+					12
+				]
+			]
+		}
+	},
+	{
+		"id": "http://zotero.org/users/11492857/items/72NL5SQM",
+		"type": "article-journal",
+		"language": "en",
+		"source": "Zotero",
+		"title": "The Number Field Sieve for Discrete Logarithms",
+		"author": [
+			{
+				"family": "Haarberg",
+				"given": "Henrik Røst"
+			}
+		]
+	},
+	{
+		"id": "http://zotero.org/users/11492857/items/F5ERVZ9Z",
+		"type": "article-journal",
+		"abstract": "Pollard’s rho method is a randomized algorithm for computing discrete logarithms. It works by deﬁning a pseudo-random sequence and then detecting a match in the sequence. Many improvements have been proposed, while few evaluation results and eﬃciency suggestions have been reported. This paper is devoted to a detailed study of the eﬃciency issues in Pollard’s rho method. We describe an empirical performance analysis of several widely applied algorithms. This should provide a better combination of algorithms and a good choice of parameters for Pollard’s rho method.",
+		"language": "en",
+		"source": "Zotero",
+		"title": "On the Eﬃciency of Pollard’s Rho Method for Discrete Logarithms",
+		"author": [
+			{
+				"family": "Bai",
+				"given": "Shi"
+			},
+			{
+				"family": "Brent",
+				"given": "Richard P"
+			}
+		]
+	},
+	{
+		"id": "http://zotero.org/users/11492857/items/VMIEHNVI",
+		"type": "document",
+		"title": "NFSmadeeasy.pdf",
+		"URL": "https://www.cs.umd.edu/~gasarch/TOPICS/factoring/NFSmadeeasy.pdf",
+		"accessed": {
+			"date-parts": [
+				[
+					"2024",
+					6,
+					13
+				]
+			]
+		}
+	}
+]
