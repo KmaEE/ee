@@ -44,7 +44,7 @@ $
 17^(456) equiv 24 " " (mod 1009)
 $
 
-Therefore $n = 456$ is the solution to this question. More generally, the discrete log problem asks for a smallest exponent $n$ for a given group $g$ and its elements $a$ and $b$ such that
+Therefore $n = 456$ is the solution to this question. More generally, the discrete log problem (DLP) asks for a smallest exponent $n$ for a given group $g$ and its elements $a$ and $b$ such that
 
 $
 a^n = b
@@ -166,21 +166,26 @@ The assumption is that this problem is difficult to compute if the group and the
 
 = Finite Field Cryptography and Attacks
 
+The term _finite field_ refers to the fact that the set of numbers from 1 to $p - 1$, alongside with zero, form another group under addition. Moreover, multiplication is distributive over addition: $a(b + c) = a b + a c$ mod $p$. A field is a set of elements that forms a group under addition and its non-zero elements forms a group under multiplication, where multiplication distributes over addition. The field of integers modulo $p$ is written as $FF_p$.#footnote[Note that $|FF_p| = p$ due to the inclusion of zero. We use $FF_p^times$ to explicitly refer to the multiplicative subgroup where $|FF_p^times| = p-1$.]
+
+People may wish to communicate privately over public channels such that the information being transmitted is safe from malicious third-party actors. Encryption protocols using cryptography are in place in internet connections to serve this purpose and defend against attacks. For example, as internet traffic usually goes through a _router_, attackers in public networks such as airport or cafe Wi-Fi can simply pretend to be the router and obtain information if unencrypted.#footnote[This is called a _man-in-the-middle_ attack.]
+
+If the information being communicated is encrypted, then attacks like this would not work since the attacker does not know how to decrypt the information. Common efficient encryption algorithms require the people involved to have a *shared secret*, that is, a password for encrypting and decrypting the messages.#footnote[Having a shared secret is called _symmetric key cryptography_. An example of a symmetric key algorithm is the AES] // TODO cite
+
+If the only form of communication between two parties is through an *insecure channel*, as in the case of internet connections between someone and their bank, it may be hard to establish such password safely. The Diffie-Hellman Key Exchange is a way to establish a shared secret even if the only channel to communicate in is insecure through the difficulty of the discrete log problem.
+
 == Diffie-Hellman Key Exchange
 
-When two people communicate through the Internet, they must do so through their internet service providers (ISPs). In the case of a public network, there may be malicious people pretending to be the router, thus making it so that your internet traffic goes through them. This is called a man-in-the-middle attack. // TODO(This needs to be revised)
+Given a known base $x$ within a group $G$, one cannot trivially obtain $x^(a b)$ from $x^a$ and $x^b$ if the integers $a$ and $b$ are not known.#footnote[Note that exponentiation here means repeated application of the group operation. In groups where the operation is addition (such as elliptic curves), we will write $a x$ and $b x$ instead.] This is named the Diffie-Hellman problem. If the discrete log problem can be solved trivially, one can simply obtain $b$ from $x^b$ and $x$, then exponentiate $(x^a)^b = x^(a b)$. As such, the difficulty of the Diffie-Hellman problem in a group is partially related to the difficulty of solving DLP in the same group.
 
-If the information being communicated is encrypted, then man-in-the-middle attacks would not work. Common encryption algorithms require the people involved to have a *shared secret*, for example a string of characters that only the two parties know. This is hard to do when the only form of communication is through an *insecure channel*, as in the case of internet connections. The Diffie-Hellman Key Exchange proposes a way to establish a shared secret even if the only channel to communicate in is insecure through the difficulty of the discrete log problem.
 
-// TODO maybe too much math here
-The mechanism is as follows:
+With the Diffie-Hellman problem, Alice can establish a shared secret with Bob by having both generate its own secret exponent - either $a$ or $b$. Alice can secretly generate $a$ and send Bob $g^a$, while Bob can secretly generate $b$ and send Alice $g^b$.
 
-Given a known base $g$ in a group $G$ (with exponentiation meaning repeated application of the group operation), Alice can establish a shared secret with Bob by generating secret integers. Alice can secretly generate $a$ and send Bob $g^a$, while Bob can secretly generate $b$ and send Alice $g^b$.
+Alice can then compute $(g^b)^a$ and Bob can compute $(g^a)^b$. As both of these are are equal to $g^(a b)$, this can be used as the shared secret.
 
-Alice can then compute $(g^b)^a$ and Bob can compute $(g^a)^b$. As both of these are equivalent to multiplying $g$ to itself $a b$ times, $(g^b)^a=(g^a)^b=g^(a b)$ can be used as the shared secret.
+Because only $g$, $g^a$, and $g^b$ are sent across the channel, any third party observer will not be able to compute $g^(a b)$ without solving the Diffie-Hellman problem. As we have assumed that the problem is difficult, this is a secure way for Alice to establish a shared secret with Bob over an insecure channel.
 
-Because only $g$, $g^a$, and $g^b$ are sent across the channel, any third party observer will not be able to compute $g^(a b)$ without solving the discrete log problem to determine $a$ or $b$. As we have assumed that the discrete log problem is difficult, this is a secure way for Alice to establish a shared secret with Bob if the only form of communication between the two is insecure.
-
+/* 
 #align(center, cetz.canvas({
   import cetz.draw: *
   content((0, 0), (2, 1), box(align(center, par[Alice]),
@@ -189,10 +194,11 @@ stroke: 1pt, width: 100%, height: 100%, inset: 1em))
 stroke: 1pt, width: 100%, height: 100%, inset: 1em))
   // TODO finish this
 }))
+*/
 
 == Index Calculus
 
-As an attacker stalking the communication could obtain $g$, $g^a$, and $g^b$, obtaining the secret $g^(a b)$ could be done by finding $a$ from the discrete log, then finding $(g^b)^a$. Below we will describe one method for finding the discrete log in finite fields named Index Calculus
+Diffie-Hellman Key Exchange on Finite Fields normally uses groups $FF_p$ where $2^2048 <= p <= 2^8192$ @friedl_diffie-hellman_2006@velvindron_increase_2017. The size of the prime ensures that solving DLP is inefficient. Below we will describe Index Calculus, which efficiently solves DLP for smaller finite fields.
 
 It is best to illustrate with an example. We'll reuse the one presented earlier:
 
@@ -200,7 +206,7 @@ $
 17^n equiv 24" (mod 1009)"
 $
 
-We first define a logarithm function $L$. $L(x)$ is defined such that
+To find $n$, we first define a logarithm function $L$. $L(x)$ is defined such that
 
 $
 17^L(x) equiv x" (mod 1009)"
@@ -213,8 +219,61 @@ $
 $
 
 So then $
-17^(L(x) + L(y) - L(x y)) = 1" (mod 1009)"
+17^(L(x) + L(y) - L(x y)) equiv 1" (mod 1009)"
 $
+
+Because the $|17| = 1008$, we have
+
+$
+L(x) + L(y) - L(x y) &equiv 0&" (mod 1008)"\
+L(x) + L(y) &equiv L(x y)&" (mod 1008)"
+$
+
+As such, we have a relation analogous to the laws of logarithm on real numbers. Since every number can be factorized into primes, the idea is the obtain $L(p)$ for small primes $p$, then figuring out $L(24)$ afterwards. We first try to factorize exponents of the base, $17$, looking for ones that can be factorized into relatively small primes:
+
+$
+17^15 &equiv 2^2 dot 5 dot 13&" (mod 1009)"\
+17^16 &equiv 2^7 dot 3&" (mod 1009)"\
+17^24 &equiv 2 dot 11^2&" (mod 1009)"\
+17^25 &equiv 2 dot 3 dot 13&" (mod 1009)"\
+17^33 &equiv 2^2 dot 3^2 dot 11&" (mod 1009)"\
+17^36 &equiv 2^2 dot 7^2&" (mod 1009)"\
+$
+
+Applying $L$ to both sides of the equations, we obtain
+
+$
+15 &equiv 2 L(2) + L(5) + L(13)&" (mod 1008)"\
+16 &equiv 2 L(7) + L(3)&" (mod 1008)"\
+24 &equiv L(2) + 2L(11)&" (mod 1008)"\
+25 &equiv L(2) + L(3) + L(13)&" (mod 1008)"\
+33 &equiv 2 L(2) + 2 L(3) + L(11)&" (mod 1008)"\
+36 &equiv 2 L(2) + 2 L(7) &" (mod 1008)"\
+$
+
+There are six unknowns $L(2), L(3), L(5), L(7), L(11), L(13)$ and six equations, using linear algebra methods, we can arrive at the solution
+
+$
+L(2) = 646, L(3) = 534, L(5) = 886,\
+L(7) = 380, L(11) = 697, L(13) = 861
+$
+
+Next up, the idea is to find $17^x dot 24$ and find one that can factorize over primes not greater than 13. Indeed, we have $17^2 dot 24 equiv 2 dot 3^2 dot 7^2" (mod 1009)"$, so then we have
+
+$
+2 + L(24) equiv L(2) + 2L(2) + 2L(7)" (mod 1008)"\
+L(24) = 456 = n
+$
+
+Therefore, we indeed arrive at the answer $n = 456$. As seen above, this method relies on the property that prime factorizations always exist, which may not apply to ellpitic curves.
+
+General Number Field Sieve#footnote[Name is based on how the factoring step is also done in parallel on a General Number Field. Describing the details of the algorithm requires way more background material than normal index calculus, therefore out of scope of this essay.] is a more sophisticated form of index calculus and in general more efficient than the normal index calculus for large primes @nguyen_index_2005. Its time complexity can be given as @lenstra_l-notation_2005:
+
+$
+exp((64\/9)^(1\/3)(ln p)^(1\/3)(ln ln p)^(2\/3))
+$
+
+where $p$ is the prime that defines the finite field in $FF_p$. Through numerical calculations, we can obtain that in a field where $p = 2^2048$ will take $10^35$ times the number of operations as in a field where $p = 3$.
 
 = Elliptic Curve Cryptography
 
@@ -337,7 +396,7 @@ With that note, diffie-hellman in elliptic curves follows the exact same procedu
 
 == Finding the Discrete Log with Pollard's $rho$ algorithm
 
-Pollard's $rho$ algorithm is a general algorithm for solving the discrete log problem for any abelian group. It is less efficient than the general number field sieve on discrete log in finite fields, taking $sqrt(N)$ on average with $N$ being the order of the group.
+Pollard's $rho$ algorithm is a general algorithm for solving the discrete log problem for any abelian group. It is less efficient than the general number field sieve on discrete log in finite fields, taking $sqrt(N)$ on average with $N$ being the order of the group. // TODO revisit
 
 We first take an example adapted from page 164 of Silverman and Tate's book: $y^2 = x^3 + 6692x + 9667$, in $F_10037$, with $P = (3354, 7358)$, $Q = (5403, 5437)$. Find $k$ such that $k P = Q$.
 
