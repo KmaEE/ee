@@ -396,9 +396,9 @@ With that note, diffie-hellman in elliptic curves follows the exact same procedu
 
 == Finding the Discrete Log with Pollard's $rho$ algorithm
 
-Pollard's $rho$ algorithm is a general algorithm for solving the discrete log problem for any abelian group. It is less efficient than the general number field sieve on discrete log in finite fields, taking $sqrt(N)$ on average with $N$ being the order of the group. // TODO revisit
+Pollard's $rho$ algorithm is a general algorithm for solving the discrete log problem for any abelian group. It is less efficient than the general number field sieve on discrete log in finite fields, taking $O(sqrt(N))$ time on average with $N$ being the order of the group. // TODO revisit
 
-We first take an example adapted from page 164 of Silverman and Tate's book: $y^2 = x^3 + 6692x + 9667$, in $F_10037$, with $P = (3354, 7358)$, $Q = (5403, 5437)$. Find $k$ such that $k P = Q$.
+We first take an example adapted from page 164 of Silverman and Tate's book: $y^2 = x^3 + 6692x + 9667$, in $F_10037$, with $P = (3354, 7358)$, $Q = (5403, 5437)$. Find $k$ such that $k P = Q$.#footnote[Originally a Montgomery equation, used substitution to turn it into the short Weierstrass form for consistency.]
 
 Generate 10 random points on the curve based on multiples of $P$ and $Q$:
 
