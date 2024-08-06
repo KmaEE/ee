@@ -1,3 +1,6 @@
+#set text(font: "IBM Plex Sans")
+
+#set par(leading: 1em)
 = To what extent can elliptic curves be used to establish a shared secret over an insecure channel?
 
 \
@@ -14,7 +17,9 @@
 5. Describe how elliptic curves form a group\
   a. Then, how elliptic curves can also be used for diffie-hellman key exchange.
 6. Formalize pollard's $rho$ algorithm, and how it can attack discrete logs for groups in general, in $O(sqrt(n))$ time.
-7. Comparison for space efficiency for elliptic curves, size of group elements for elliptic curves compared to finite fields.
+7. Describe the use of Diffie-Hellman in the real world with the TLS 1.3 algorithm
+8. Compare the performance of a single group operation in both finite field diffie-hellman and elliptic curve diffie-hellman and form conclusions
+9. Comparison for space efficiency for elliptic curves, size of group elements for elliptic curves compared to finite fields.
 
 === Tentative Table of Contents
 
@@ -29,4 +34,7 @@
   a. Elliptic curve groups\
   b. Elliptic curve diffie-hellman\
   c. Pollard's $rho$ algorithm\
-4. Evaluation
+4. Evaluation\
+  a. Diffie-Hellman used in the real world: TLS 1.3\
+  b. Performance of group operations \
+  c. Comparison of space efficiecies
