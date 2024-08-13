@@ -4,6 +4,7 @@
   justify: true,
   leading: 0.75em
 )
+#set text(font: "IBM Plex Sans")
 
 
 #heading(outlined: false)[To what extent can elliptic curves be used to establish a shared secret over an insecure channel?]
@@ -465,9 +466,13 @@ As elliptic curve points have coordinates under the prime field $2^255 - 19$, ea
 
 == Performance of group operations
 
-Assume that multiplying two $256$-bit integers has cost $bold(M)$. Multiplication of two $2048$-bit integers thus will cost $64bold(M)$ as each $2048$-bit integer has $8$ $256$-bit digits and each digit from the first operand needs to multiply with the next operand.
+Assume that multiplying two $256$-bit integers has cost $bold(C)$. Multiplication of two $2048$-bit integers thus will cost $64bold(C)$ as each $2048$-bit integer has $8$ $256$-bit digits and each digit from the first operand needs to multiply with the next operand.
 
-The story in elliptic curves is much more complicated. Curve25519 follows the form $B y^2 = x^3 + A x^2 + x$ called a Montgomery curve. All curves of this form can be transformed into the short Weierstrass form but not the other way around. Detailed in @costello_montgomery_2018, curve point additions for only the $x$-coordinates 
+The story in elliptic curves is much more complicated. Curve25519 follows the form $B y^2 = x^3 + A x^2 + x$ called a Montgomery curve. All curves of this form can be transformed into the short Weierstrass form but not the other way around. Detailed in @costello_montgomery_2018, the diffie-hellman key exchange protocol could be designed so that only the $x$-coordinate of each point in the process is needed, which simplifies the process by removing the need to compute $y$ coordinates. Under the arithmetic of only the $x$ coordinates of curve points, adding two curve points costs $3M + 2S + 3a + 3s$, where $M, S, a, s$ are costs for multiplying two numbers, squaring a number, adding two numbers, subtracting two numbers in the field the curve is defined on respectively. Assuming that the cost for addition and subtraction is negligible compared to multiplication, and assuming that squaring has approximately the same cost as multiplying two numbers,#footnote[In reality, squaring has slightly less costs than multiplying as the former can be optimized a bit more for efficiency.] the cost for adding two curve points is approximately $5M$. Note that the field is defined over $2^255 - 19$, so the cost of a multiplication $M$ (for two $255$-bit integers) can be considered as less than the cost of multiplying two $256$-bit integers. So we have $M < bold(C)$.
+
+Note how adding two curve points only costs $5M$, while multiplying in finite fields costs $64bold(C)$. (approximately 13x difference) As performing the group operation is the primary backbone behind Diffie-Hellman key exchange, this performance difference can have huge implications.
+
+/* Doubling a curve point costs $2M + 2S + 1c + 3a + 1s$ where $c$ is the cost of multiplying by $(A + 2) / 4 = 121666$ for curve25519. For the same reason we assume that this costs approximately $4M$. */
 
 == Comparison
 
