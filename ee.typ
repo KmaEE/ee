@@ -180,26 +180,29 @@ The assumption is that this problem is difficult to compute if the group and the
 
 = Finite Field Cryptography and Attacks
 
-Let's talk about cryptography. Most of that needs to be in a later section because we need more math before the gold, but this is a preview. We know that websites use cryptography methods for connecting their users with them. But _how_ is what we haven't covered yet.
+Let's talk about cryptography. We know that websites use cryptographic methods for connecting their users with them. But _how_ is what we haven't covered yet.
 
-When we say the Internet is secure, we don't mean an Internet where we designed it such that we get top secret channels with the websites we visit where it would be _physically impossible_ to eavesdrop any information from it.
+When Internet connections are secured, we are protected from people that may have access to our data; for example, an attacker could try to pretend to be the router of a public Wi-Fi and
+sniff the Internet traffic sent through the Wi-Fi network; some malicious actor obtaining access to the servers of an Internet Service Provider could attempt to log Internet connections
+and try to find sensitive information being transmitted.
 
-TODO finish this line of writing
+But cryptography protects the information from these scenarios through encryption, such that only the person and the website they are visiting would know how to decrypt and obtain the information being transferred.
+
+We'll first describe Finite Field Cryptography and specifically how it helps secure
+an otherwise insecure form of communication.
 
 The term _finite field_ refers to the fact that the set of numbers from 1 to $p - 1$, alongside with zero, form another group under addition. Moreover, multiplication is distributive over addition: $a(b + c) = a b + a c$ mod $p$. A field is a set of elements that forms a group under addition and its non-zero elements forms a group under multiplication, where multiplication distributes over addition. The field of integers modulo $p$ is written as $FF_p$.#footnote[Note that $|FF_p| = p$ due to the inclusion of zero. We use $FF_p^times$ to explicitly refer to the multiplicative subgroup where $|FF_p^times| = p-1$.]
 
-People may wish to communicate privately over public channels such that the information being transmitted is safe from malicious third-party actors. Encryption protocols using cryptography are in place in internet connections to serve this purpose and defend against attacks. For example, as internet traffic usually goes through a _router_, attackers in public networks such as airport or cafe Wi-Fi can simply pretend to be the router and obtain information.#footnote[This is called a _man-in-the-middle_ attack.]
+Suppose we want to secure communication between A and B. The underlying assumption is that anything A tries to send to B or vice versa can be eavesdropped or accessed by someone else. Therefore, we need to come up with a clever way to send the information effectively that an attacker can't effectively use to decrypt the messages. At the end of this communication procedure, A and B would have a password to encrypt all their messages going forward, with a third party attacker unable to acquire this password from the public communication.
 
-If the information being communicated is encrypted, then attacks like this would not work since the eavesdropper does not know how to decrypt the information. Common efficient encryption algorithms require the people involved to have a *shared secret*, that is, a password for encrypting and decrypting the messages.#footnote[Having a shared secret is called _symmetric key cryptography_. An example of a symmetric key algorithm is the AES] // TODO cite
-
-If the only form of communication between two parties is through a potentially *insecure channel*, as in the case of internet connections, it may be hard to establish such password safely. The Diffie-Hellman Key Exchange is a way to establish a shared secret even if the only channel to communicate in is insecure through the difficulty of the discrete log problem.
+What I've described is the core behind the Diffie-Hellman Key Exchange. The channel of communication between A and B is an *insecure channel*, and this exchange is able
+to establish a *shared secret* despite it being insecure.
 
 == Diffie-Hellman Key Exchange
 
-Given a known base $x$ within a group $G$, one cannot trivially obtain $x^(a b)$ from $x^a$ and $x^b$ if the integers $a$ and $b$ are not known.#footnote[Note that exponentiation here means repeated application of the group operation. In groups where the operation is addition (such as elliptic curves), we will write $a x$ and $b x$ instead.] This is named the Diffie-Hellman problem. If the discrete log problem can be solved trivially, one can simply obtain $b$ from $x^b$ and $x$, then exponentiate $(x^a)^b = x^(a b)$. As such, the difficulty of the Diffie-Hellman problem in a group is partially related to the difficulty of solving DLP in the same group.
+Given a known base $x$ within a group $G$, one cannot trivially obtain $x^(a b)$ from just $x^a$ and $x^b$ if the integers $a$ and $b$ are not known.#footnote[Note that exponentiation here means repeated application of the group operation. In groups where the operation is addition (such as elliptic curves), we will write $a x$ and $b x$ instead.] This is named the Diffie-Hellman problem. If the discrete log problem can be solved trivially, one can simply obtain $b$ from $x^b$ and $x$, then exponentiate $(x^a)^b = x^(a b)$. As such, the difficulty of the Diffie-Hellman problem in a group is partially related to the difficulty of solving DLP in the same group.
 
-
-With the Diffie-Hellman problem, Alice can establish a shared secret with Bob by having both generate its own secret exponent - either $a$ or $b$. Alice can secretly generate $a$ and send Bob $x^a$, while Bob can secretly generate $b$ and send Alice $x^b$.
+With the Diffie-Hellman problem, Alice can establish a shared secret with Bob by having both generate their own secret exponent - either $a$ or $b$. Alice can secretly generate $a$ and send Bob $x^a$, while Bob can secretly generate $b$ and send Alice $x^b$.
 
 Alice can then compute $(x^b)^a$ and Bob can compute $(x^a)^b$. As both of these are are equal to $x^(a b)$, this can be used as the shared secret.
 
