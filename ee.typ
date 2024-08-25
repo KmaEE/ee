@@ -26,9 +26,23 @@ Words: #total-words
 
 Our society is built on cryptography. Cryptography is built on math. This essay will discuss the math behind the cryptography that is behind our society.
 
-Well, more specifically, _one_ specific method in cryptography, which provides _one_ functionality that is in such a broad use today. It's in such wide use that 99.3% of the top 1 million websites prefer this method over others to encrypt their users' internet connections with them.@warburton_2021_2021
+Well, more specifically, _one_ specific method in cryptography, which provides _one_ functionality that is in such a broad use today. 99.3% of the top 1 million websites prefer this method over others to encrypt their users' internet connections with them.@warburton_2021_2021
 
-To get a general understanding of this cryptographic method, though, we need to cover some fundamentals of group theory, which is much of what modern cryptography is based on.
+To take a look at why we want cryptography, let's situate ourselves in a time and place where Bob wants to send something to Alice. But Eve is also there. Eve hates Bob and Alice, and Bob doesn't want Eve to know what he sends to Alice. We'll first describe a conventional cryptographic technique for this called _public key cryptography_.
+
+Under public key cryptography, Alice and Bob both have a pair of keys, one key that is known by the public called their public key and one key that is kept as a secret called the private key. Under this system, Bob can use cryptographic methods based on Alice's public key to encrypt a message that only Alice can decrypt using her private key.
+
+There are some disadvantages to this method. One is that encryption using public keys is often slower than _symmetric cryptography_, where a password only known to both sides is used to encrypt messages instead. A simple solution for this scenario would be Bob could create a password, use Alice's public key to send this password securely to her, and then use the password for future communications.@sako_public_2005
+
+But that can also be insecure. If Eve keeps a record of all encrypted messages sent between Bob and Alice, and she obtains Alice's private key, she will be able to decrypt the passwords, and therefore the messages. On cryptographic terms, we say that this method does not have _forward secrecy_.
+
+But then there came Diffie and Hellman. With the cryptographic technique called Diffie-Hellman Key Exchange in their papers, Alice and Bob can quickly establish a password, while Eve is unable to obtain the password just from inspecting their communication. This is great for Alice and Bob, as they can generate a password each time they communicate. If Eve ever finds out the password for one of their messages, she would not be able to decrypt the other messages.@krawczyk_perfect_2005@just_diffiehellman_2005
+
+So here we go. Diffie-Hellman Key Exchange is designed specifically so that people can establish a shared secret (the password between Alice and Bob) over an insecure channel (a communication method that Eve can eavesdrop).
+
+But Diffie-Hellman also takes on different forms. There is Finite Field Diffie-Hellman and Elliptic Curve Diffie-Hellman. We'll look at both techniques and compare the two methods in terms of how efficient they are (how much data does Alice and Bob need to send to each other?) and how fast they are (how fast can Alice and Bob calculate the shared password with the given information?)
+
+#pagebreak() // TODO
 
 = Group Theory
 
@@ -180,27 +194,13 @@ The assumption is that this problem is difficult to compute if the group and the
 
 = Finite Field Cryptography and Attacks
 
-Let's talk about cryptography. We know that websites use cryptographic methods for connecting their users with them. But _how_ is what we haven't covered yet.
-
-When Internet connections are secured, we are protected from people that may have access to our data; for example, an attacker could try to pretend to be the router of a public Wi-Fi and
-sniff the Internet traffic sent through the Wi-Fi network; some malicious actor obtaining access to the servers of an Internet Service Provider could attempt to log Internet connections
-and try to find sensitive information being transmitted.
-
-But cryptography protects the information from these scenarios through encryption, such that only the person and the website they are visiting would know how to decrypt and obtain the information being transferred.
-
-We'll first describe Finite Field Cryptography and specifically how it helps secure
-an otherwise insecure form of communication.
-
-The term _finite field_ refers to the fact that the set of numbers from 1 to $p - 1$, alongside with zero, form another group under addition. Moreover, multiplication is distributive over addition: $a(b + c) = a b + a c$ mod $p$. A field is a set of elements that forms a group under addition and its non-zero elements forms a group under multiplication, where multiplication distributes over addition. The field of integers modulo $p$ is written as $FF_p$.#footnote[Note that $|FF_p| = p$ due to the inclusion of zero. We use $FF_p^times$ to explicitly refer to the multiplicative subgroup where $|FF_p^times| = p-1$.]
-
-Suppose we want to secure communication between A and B. The underlying assumption is that anything A tries to send to B or vice versa can be eavesdropped or accessed by someone else. Therefore, we need to come up with a clever way to send the information effectively that an attacker can't effectively use to decrypt the messages. At the end of this communication procedure, A and B would have a password to encrypt all their messages going forward, with a third party attacker unable to acquire this password from the public communication.
-
-What I've described is the core behind the Diffie-Hellman Key Exchange. The channel of communication between A and B is an *insecure channel*, and this exchange is able
-to establish a *shared secret* despite it being insecure.
+The term _finite field_ refers to the fact that the set of numbers from 1 to $p - 1$, alongside with zero, form another group under addition. Moreover, multiplication is distributive over addition: $a(b + c) = a b + a c$ mod $p$. A field is a set of elements that forms a group under addition and its non-zero elements forms a group under multiplication, where multiplication distributes over addition. The field of integers modulo $p$ is written as $FF_p$. Note that $|FF_p| = p$ due to the inclusion of zero. We use $FF_p^times$ to explicitly refer to the multiplicative subgroup where $|FF_p^times| = p-1$.
 
 == Diffie-Hellman Key Exchange
 
-Given a known base $x$ within a group $G$, one cannot trivially obtain $x^(a b)$ from just $x^a$ and $x^b$ if the integers $a$ and $b$ are not known.#footnote[Note that exponentiation here means repeated application of the group operation. In groups where the operation is addition (such as elliptic curves), we will write $a x$ and $b x$ instead.] This is named the Diffie-Hellman problem. If the discrete log problem can be solved trivially, one can simply obtain $b$ from $x^b$ and $x$, then exponentiate $(x^a)^b = x^(a b)$. As such, the difficulty of the Diffie-Hellman problem in a group is partially related to the difficulty of solving DLP in the same group.
+Given a known base $x$ within a group $G$, one cannot trivially obtain $x^(a b)$ from just $x^a$ and $x^b$ if the integers $a$ and $b$ are not known. (Exponentiation here means repeated application of the group operation. In groups where the operation is normally known as addition (such as elliptic curves), we will write $a x$ and $b x$ instead.)
+
+This is named the Diffie-Hellman problem. If the discrete log problem can be solved trivially, one can simply obtain $b$ from $x^b$ and $x$, then exponentiate $(x^a)^b = x^(a b)$. As such, the difficulty of the Diffie-Hellman problem in a group is partially related to the difficulty of solving DLP in the same group.
 
 With the Diffie-Hellman problem, Alice can establish a shared secret with Bob by having both generate their own secret exponent - either $a$ or $b$. Alice can secretly generate $a$ and send Bob $x^a$, while Bob can secretly generate $b$ and send Alice $x^b$.
 
