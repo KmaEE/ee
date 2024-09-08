@@ -28,21 +28,19 @@ Our society is built on cryptography. Cryptography is built on math. This essay 
 
 Well, more specifically, _one_ specific method in cryptography, which provides _one_ functionality that is in such a broad use today. 99.3% of the top 1 million websites prefer this method over others to encrypt their users' internet connections with them.@warburton_2021_2021
 
-To take a look at why we want cryptography, let's situate ourselves in a time and place where Bob wants to send something to Alice. But Eve is also there. Eve hates Bob and Alice, and Bob doesn't want Eve to know what he sends to Alice. We'll first describe a conventional cryptographic technique for this called _public key cryptography_.
+To take a look at why we want cryptography, let's situate ourselves in a time and place where Bob wants to send something to Alice, with an extra adversary named Eve. Eve hates Bob and Alice, and will try to get information from the communication in any way she can. One conventional conventional cryptographic technique called _public key cryptography_ can help Bob in sending messages securely.
 
-Under public key cryptography, Alice and Bob both have a pair of keys, one key that is known by the public called their public key and one key that is kept as a secret called the private key. Under this system, Bob can use cryptographic methods based on Alice's public key to encrypt a message that only Alice can decrypt using her private key.
+Under public key cryptography, Alice and Bob both have a pair of keys, one key that is known by the public called their public key, and one key that is kept as a secret called the private key. Under this system, Bob can use cryptographic methods based on Alice's public key to encrypt a message that only Alice can decrypt using her private key.
 
-There are some disadvantages to this method. One is that encryption using public keys is often slower than _symmetric cryptography_, where a password only known to both sides is used to encrypt messages instead. A simple solution for this scenario would be Bob could create a password, use Alice's public key to send this password securely to her, and then use the password for future communications.@sako_public_2005
+There are some disadvantages to this method. One is that encryption using public keys is often slower than _symmetric cryptography_, where a password only known to both sides is used to encrypt  and decrypt messages instead. A simple solution for this scenario would be Bob could create a password, use Alice's public key to send this password securely to her, and then use the password for future communications.@sako_public_2005
 
 But that can also be insecure. If Eve keeps a record of all encrypted messages sent between Bob and Alice, and she obtains Alice's private key, she will be able to decrypt the passwords, and therefore the messages. On cryptographic terms, we say that this method does not have _forward secrecy_.
 
 But then there came Diffie and Hellman. With the cryptographic technique called Diffie-Hellman Key Exchange in their papers, Alice and Bob can quickly establish a password, while Eve is unable to obtain the password just from inspecting their communication. This is great for Alice and Bob, as they can generate a password each time they communicate. If Eve ever finds out the password for one of their messages, she would not be able to decrypt the other messages.@krawczyk_perfect_2005@just_diffiehellman_2005
 
-So here we go. Diffie-Hellman Key Exchange is designed specifically so that people can establish a shared secret (the password between Alice and Bob) over an insecure channel (a communication method that Eve can eavesdrop).
+ Diffie-Hellman Key Exchange is designed specifically so that people can establish a shared secret (the password between Alice and Bob) over an insecure channel (a communication method that Eve can eavesdrop). Note that additional cryptographic techniques are used to prevent _tampering_, in a situation where Eve can modify any messages sent between Alice and Bob. Tampering, and methods that are resistant to it, are out of scope for this paper.
 
-But Diffie-Hellman also takes on different forms. There is Finite Field Diffie-Hellman and Elliptic Curve Diffie-Hellman. We'll look at both techniques and compare the two methods in terms of how efficient they are (how much data does Alice and Bob need to send to each other?) and how fast they are (how fast can Alice and Bob calculate the shared password with the given information?)
-
-#pagebreak() // TODO
+Diffie-Hellman takes on different forms. There is Finite Field Diffie-Hellman and Elliptic Curve Diffie-Hellman. We'll look at both techniques and compare the two methods in terms of how efficient they are (how much data does Alice and Bob need to send to each other?) and how fast they are (how quickly can Alice and Bob calculate the shared password in an exchange?)
 
 = Group Theory
 
@@ -198,18 +196,34 @@ The term _finite field_ refers to the fact that the set of numbers from 1 to $p 
 
 == Diffie-Hellman Key Exchange
 
-// todo, we should probably start with a more concrete example here.
+Building off the previous example, suppose we're given the numbers $407$ and $24$, which are both exponents of a known base $17$ in the group modulo 1009. Let's let $
+17^a equiv 407  " " (mod 1009)\
+17^b equiv 24 " " (mod 1009)
+$
 
+Is it possible for us to find $17^(a b)$? If we know the value of $a = 123$, we can raise $24$ to $123$, since $(17^b)^a = 17^(a b)$, which helps us obtain $578$, the secret answer. More generally, if we know $17^a$ and the exponent $b$, or if we know $17^b$ and the exponent $a$, it would be possible for us to know $17^(a b)$. But just being given $17^a$ and $17^b$ in this case would make it less trivial.
+
+This problem of finding $x^(a b)$ when just given $x$, $x^a$, and $x^b$ is named the Diffie-Hellman problem, and it is not hard to see that the difficulty of this problem relates to the difficulty of the Discrete Log Problem. Assuming this problem is difficult, we can use this to setup a cryptographic exchange. 
+
+/*
 Given a known base $x$ within a group $G$, one cannot trivially obtain $x^(a b)$ from just $x^a$ and $x^b$ if the integers $a$ and $b$ are not known. (Exponentiation here means repeated application of the group operation. In groups where the operation is normally known as addition (such as elliptic curves), we will write $a x$ and $b x$ instead.)
 
 This is named the Diffie-Hellman problem. If the discrete log problem can be solved trivially, one can simply obtain $b$ from $x^b$ and $x$, then exponentiate $(x^a)^b = x^(a b)$. As such, the difficulty of the Diffie-Hellman problem in a group is partially related to the difficulty of solving DLP in the same group.
+*/
 
-With the Diffie-Hellman problem, Alice can establish a shared secret with Bob by having both generate their own secret exponent - either $a$ or $b$. Alice can secretly generate $a$ and send Bob $x^a$, while Bob can secretly generate $b$ and send Alice $x^b$.
+Consider the following case where anything sent between Alice and Bob can be seen by Eve. Alice knows that $17^123 equiv 407$, but only sends Bob $407$. Bob knows that $17^456 equiv 24$, but only sends Alice $24$. After exchanging their information, Alice can compute $24^123 equiv 578$, and Bob can also compute $407^456 equiv 578$. Eve, only intercepting the numbers $17, 407, 24$ in their communication, is unable to calculate the secret number $578$ without solving the Diffie-Hellman problem.
+
+#figure(image("Diffie-Hellman.svg", width: 80%), caption: [A diagram describing the Diffie-Hellman Key Exchange process.])
+
+
+To generalize, the Diffie-Hellman Key Exchange utilizes the difficulty of the Diffie-Hellman problem. Under an agreed upon group $G$ and base $x in G$, two parties Alice and Bob can establish a shared secret. Alice can generate an exponent $a$ and send Bob $x^a$, while Bob can generate a secret exponent $b$ and send Alice $x^b$. Together, they can both compute $x^(a b)$ as their shared secret securely, even if Eve is able to intercept this communication.
+
+/*With the Diffie-Hellman problem, Alice can establish a shared secret with Bob by having both generate their own secret exponent - either $a$ or $b$. Alice can secretly generate $a$ and send Bob $x^a$, while Bob can secretly generate $b$ and send Alice $x^b$.
 
 Alice can then compute $(x^b)^a$ and Bob can compute $(x^a)^b$. As both of these are are equal to $x^(a b)$, this can be used as the shared secret.
 
 Because only $x$, $x^a$, and $x^b$ are sent across the channel, any third party observer will not be able to compute $x^(a b)$ without solving the Diffie-Hellman problem. As we have assumed that the problem is difficult, this is a secure way for Alice to establish a shared secret with Bob over an insecure channel.
-
+*/
 /* 
 #align(center, cetz.canvas({
   import cetz.draw: *
@@ -247,7 +261,7 @@ So then $
 17^(L(x) + L(y) - L(x y)) equiv 1" (mod 1009)"
 $
 
-Because the $|17| = 1008$, we have
+Because $|17| = 1008$, we have
 
 $
 L(x) + L(y) - L(x y) &equiv 0&" (mod 1008)"\
@@ -265,7 +279,7 @@ $
 17^36 &equiv 2^2 dot 7^2&" (mod 1009)"\
 $
 
-Applying $L$ to both sides of the equations, we obtain
+Applying $L$ to both sides of the equations, we obtain (notice the change in modulus from $1009$ to $1008$)
 
 $
 15 &equiv 2 L(2) + L(5) + L(13)&" (mod 1008)"\
@@ -292,7 +306,7 @@ $
 
 Therefore, we indeed arrive at the answer $n = 456$. As seen above, this method relies on the property that prime factorizations always exist, which may not apply to ellpitic curves.
 
-General Number Field Sieve#footnote[Name is based on how the factoring step is also done in parallel on a General Number Field. Describing the details of the algorithm requires way more background material than normal index calculus, therefore out of scope of this essay.] is a more sophisticated form of index calculus and in general more efficient than the normal index calculus for large primes @nguyen_index_2005. The number of operations expected for the algorithm can be written as @lenstra_l-notation_2005:
+We've just descibed the basic algorithm for Index Calculus, there is a more sophisticated method called General Number Field Sieve which builds upon index calculus. GNFS is in general more efficient than simple index calculus for large primes @nguyen_index_2005. The number of operations expected for the GNFS algorithm can be written as @lenstra_l-notation_2005:
 
 $
 exp((64\/9)^(1\/3)(ln p)^(1\/3)(ln ln p)^(2\/3))
@@ -392,7 +406,7 @@ Bézout's theorem states that in general two plane curves given in the equations
 
 Formally, the group of elliptic curves can be defined in projective space where the point at infinity can be treated like any other point. For ease of presentation, the point at infinity will be denote as $O$.
 
-#image("Screenshot_20240626_152533.png")
+#figure(image("Screenshot_20240626_152533.png"), caption: [Graphical proof of associativity])
 
 Note that the intersections between the blue lines and the curve are $(P+Q)*R$, $P$, $Q$, $R$, $Q*R$, $Q+R$, $P*R$, $P+Q$, and $O$.
 
@@ -458,7 +472,7 @@ We reach a cycle with $A_95 = A_100$. Since we know the multiples of $P$ and $Q$
 
 $
 infinity = 172P + 135Q = (172 + 135n)P\
-172 + 135n equiv 0" (mod 10151)"
+172 + 135n equiv 0" (mod 10151)"\
 n equiv 1277" (mod 10151)"
 $
 
@@ -466,7 +480,7 @@ With verification, we indeed have $1277P = Q$.
 
 = Evaluation
 
-Pollard's $rho$ algorithm on elliptic curve groups works on average with $sqrt(pi/4 N)$ elliptic curve additions with $N$ being the order for the base point $P$ @bernstein_correct_2011. On the other hand, the general number field sieve takes about $exp((64\/9)^(1\/3)(ln p)^(1\/3)(ln ln p)^(2\/3))$ in a prime field with order $p$. Assigning real numbers to these expressions, we should take a look at the current industry standards.
+Pollard's $rho$ algorithm on elliptic curve groups works on average with $sqrt(pi/4 N)$ elliptic curve additions with $N$ being the order for the base point $P$ @bernstein_correct_2011. On the other hand, the general number field sieve takes about $exp((64\/9)^(1\/3)(ln p)^(1\/3)(ln ln p)^(2\/3))$ in a prime field with order $p$. Assigning real numbers to these expressions, we can evaluate the current industry standards.
 
 == Diffie-Hellman in TLS 1.3
 
