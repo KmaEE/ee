@@ -11,6 +11,10 @@
 
 #heading(outlined: false)[To what extent can elliptic curves be used to establish a shared secret over an insecure channel?]
 
+// TODO Title
+// TODO category
+// TODO see EE guide for cover page
+
 
 #show: word-count.with()
 
@@ -28,7 +32,7 @@ Our society is built on cryptography. Cryptography is built on math. This essay 
 
 Well, more specifically, _one_ specific method in cryptography, which provides _one_ functionality that is in such a broad use today. 99.3% of the top 1 million websites prefer this method over others to encrypt their users' internet connections with them.@warburton_2021_2021
 
-To take a look at why we want cryptography, let's situate ourselves in a time and place where Bob wants to send something to Alice, with an extra adversary named Eve. Eve hates Bob and Alice, and will try to get information from the communication in any way she can. One conventional conventional cryptographic technique called _public key cryptography_ can help Bob in sending messages securely.
+To take a look at why we want cryptography, let's situate ourselves in a time and place where Bob wants to send something to Alice, with an extra adversary named Eve. Eve dislikes Bob and Alice, and will try to get information from the communication in any way she can. One conventional cryptographic technique called _public key cryptography_ can help Bob in sending messages securely.
 
 Under public key cryptography, Alice and Bob both have a pair of keys, one key that is known by the public called their public key, and one key that is kept as a secret called the private key. Under this system, Bob can use cryptographic methods based on Alice's public key to encrypt a message that only Alice can decrypt using her private key.
 
@@ -38,7 +42,7 @@ But that can also be insecure. If Eve keeps a record of all encrypted messages s
 
 But then there came Diffie and Hellman. With the cryptographic technique called Diffie-Hellman Key Exchange in their papers, Alice and Bob can quickly establish a password, while Eve is unable to obtain the password just from inspecting their communication. This is great for Alice and Bob, as they can generate a password each time they communicate. If Eve ever finds out the password for one of their messages, she would not be able to decrypt the other messages.@krawczyk_perfect_2005@just_diffiehellman_2005
 
- Diffie-Hellman Key Exchange is designed specifically so that people can establish a shared secret (the password between Alice and Bob) over an insecure channel (a communication method that Eve can eavesdrop). Note that additional cryptographic techniques are used to prevent _tampering_, in a situation where Eve can modify any messages sent between Alice and Bob. Tampering, and methods that are resistant to it, are out of scope for this paper.
+Diffie-Hellman Key Exchange is designed specifically so that people can establish a shared secret (the password between Alice and Bob) over an insecure channel (a communication method that Eve can eavesdrop). Note that additional cryptographic techniques are used to prevent _tampering_, in a situation where Eve can modify any messages sent between Alice and Bob. Tampering, and methods that are resistant to it, are out of scope for this paper.
 
 Diffie-Hellman takes on different forms. There is Finite Field Diffie-Hellman and Elliptic Curve Diffie-Hellman. We'll look at both techniques and compare the two methods in terms of how efficient they are (how much data does Alice and Bob need to send to each other?) and how fast they are (how quickly can Alice and Bob calculate the shared password in an exchange?)
 
@@ -58,11 +62,13 @@ $
 a dot a^(p-2) equiv 1 " " (mod p)
 $
 
-Thus, under multiplication modulo $p$, any integer $a$ multiplied by $a^(p-2)$ results in 1. As 1 is the multiplicative identity ($1 dot x = x$), $a^(p-2)$ is said to be $a$'s _multiplicative inverse_. Consider the set of numbers from $1$ to $p - 1$. Every number has a multiplicative inverse modulo $p$; The set contains an identity element ($1$); Multiplication is associative ($a dot (b dot c) = (a dot b) dot c$); And each multiplication will always result in a number between $1$ to $p - 1$ since it is performed modulo $p$. These properties, existence of an identity element and inverses, associativity and closure of operations, are exactly the properties that define a group.
+Thus, under multiplication modulo $p$, any integer $a$ multiplied by $a^(p-2)$ results in 1. As 1 is the multiplicative identity ($1 dot x = x$), $a^(p-2)$ is said to be $a$'s _multiplicative inverse_. Consider the set of numbers from $1$ to $p - 1$. Every number $a$ has a multiplicative inverse $a^(p-2)$ modulo $p$; The set contains an identity element ($1$); Multiplication is associative ($a dot (b dot c) = (a dot b) dot c$); And each multiplication will always result in a number between $1$ to $p - 1$ since it is performed modulo $p$. These properties, existence of an identity element and inverses, associativity, and the closure of operations, are exactly the properties that define a group.
 
-A group is, at its core, a set. We'll use some of the same language with sets, for example the $in$ symbol and the word _element_. We will refer to the specific group we discussed above as $ZZ_p^times$. The subscript is the _modulus_ of operations, while the superscript specifies the operation.#footnote[In a similar vein, $ZZ_p^+$ refers to the same set of numbers, but specifies addition as its group operation.] The _order_ of a group refers to the number of elements in that group. For $ZZ_p^times$, the order is $p - 1$ since the elements are $1, 2, ..., p - 1$. Using notation, we write $|ZZ_p^times| = p - 1$.
+A group is, at its core, a set. We'll use some of the same language with sets, for example the $in$ symbol and the word _element_. We will refer to the specific group we discussed above as $ZZ_p^times$. The subscript is the _modulus_ of operations, while the superscript specifies the operation. In a similar vein, $ZZ_p^+$ refers to the same set of numbers (though also including the number $0$, unlike multiplication), but specifies addition as its group operation.
 
-The _order_ of a specific element $x$, refers to the smallest integer $k$ such that $x^k = 1$, where $1$ is the identity element.#footnote[On a first glance, the definitions of order for a group and its elements seem to be unrelated. While in fact, the order of an element is also the order of a _subgroup_ generated by that element. The meanings of "subgroup" and "generated" are outside the scope of this essay.] For example, the order of $17$ in $ZZ_1009^times$ is $1008$, because $1008$ is the smallest integer such that $17^1008 = 1$, whereas the order of $2$ in the same group is $504$, since $2^504 = 1$. Therefore, we have $|17| = 1008$ and $|2| = 504$.
+The _order_ of a group refers to the number of elements in that group. For $ZZ_p^times$, the order is $p - 1$ since the elements are $1, 2, ..., p - 1$. Using notation, we write $|ZZ_p^times| = p - 1$. As per above, the additive group includes zero, therefore $|ZZ_p^+| = p$.
+
+The _order_ of a specific element $x$, refers to the smallest integer $k$ such that $x^k = 1$, where $1$ is the identity element. For example, the order of $17$ in $ZZ_1009^times$ is $1008$, because $17^1008=1$ and $1008$ is the smallest smallest exponent to give $1$, whereas the order of $2$ in the same group is $504$, since $2^504 = 1$ and $504$ is the smallest exponent. Therefore, we have $|17| = 1008$ and $|2| = 504$.
 
 == The Discrete Log Problem
 
@@ -78,7 +84,7 @@ $
 a^n = b
 $
 
-Given this problem, one might take the brute-force or complete search approach, repeatedly performing the group multiplication, calculating $a^2$, $a^3$, $a^4$ and and comparing each with $b$. In the example problem, it would take $455$ multiplications before finally arriving at the answer. Assume the algorithm is tasked to solve questions of this kind repeatedly with the exponent $n$ taken at random. This algorithm would take on average $1/2|a|$ operations. As the order $|a|$ gets big (towards numbers as big as $2^200$), this approach quickly becomes infeasible.
+Given this problem, one might take the brute-force approach, repeatedly performing the group multiplication, calculating $a^2$, $a^3$, $a^4$ and and comparing each with $b$. In the example problem, it would take $455$ multiplications before finally arriving at the answer. Assume the algorithm is tasked to solve questions of this kind repeatedly with the exponent $n$ taken at random. This algorithm would take on average $1/2|a|$ operations. As the order $|a|$ gets big (towards numbers as big as $2^200$), this approach quickly becomes infeasible.
 
 The assumption that the discrete log cannot be solved trivially in specific groups is the core of cryptographic protocols and algorithms. There are known techniques better than a brute-force search which can solve the discrete log problem either for specific groups or for all groups in general. We shall discuss those methods in a later section, though cryptography is done on well-chosen groups such that even those more advanced attacks become infeasible.
 
@@ -196,14 +202,21 @@ The term _finite field_ refers to the fact that the set of numbers from 1 to $p 
 
 == Diffie-Hellman Key Exchange
 
-Building off the previous example, suppose we're given the numbers $407$ and $24$, which are both exponents of a known base $17$ in the group modulo 1009. Let's let $
+Building off the previous example, suppose we're given the numbers $407$ and $24$, which are both exponents of a known base $17$ in $FF_1009^times$. Let's let $
 17^a equiv 407  " " (mod 1009)\
 17^b equiv 24 " " (mod 1009)
 $
 
-Is it possible for us to find $17^(a b)$? If we know the value of $a = 123$, we can raise $24$ to $123$, since $(17^b)^a = 17^(a b)$, which helps us obtain $578$, the secret answer. More generally, if we know $17^a$ and the exponent $b$, or if we know $17^b$ and the exponent $a$, it would be possible for us to know $17^(a b)$. But just being given $17^a$ and $17^b$ in this case would make it less trivial.
+Is it possible for us to find $17^(a b)$? If we know the value of $a = 123$, we can raise $24$ to $123$.
 
-This problem of finding $x^(a b)$ when just given $x$, $x^a$, and $x^b$ is named the Diffie-Hellman problem, and it is not hard to see that the difficulty of this problem relates to the difficulty of the Discrete Log Problem. Assuming this problem is difficult, we can use this to setup a cryptographic exchange. 
+$
+17^b = 24 #h(55pt) a = 123\
+17^(a b) = (17^b)^a = 24^123 = 578
+$
+
+More generally, if we know $17^a$ and the exponent $b$, or if we know $17^b$ and the exponent $a$, it would be possible for us to know $17^(a b)$. But just being given $17^a$ and $17^b$ in this case would make it less trivial.
+
+This problem of finding $x^(a b)$ when just given $x$, $x^a$, and $x^b$ is named the Diffie-Hellman problem, and it is not hard to see that the difficulty of this problem relates to the difficulty of the Discrete Log Problem, since solving the Discrete Log would give us the answer to the Diffie-Hellman problem. Assuming the Diffie-Hellman problem is difficult, we can use this to setup a cryptographic exchange. 
 
 /*
 Given a known base $x$ within a group $G$, one cannot trivially obtain $x^(a b)$ from just $x^a$ and $x^b$ if the integers $a$ and $b$ are not known. (Exponentiation here means repeated application of the group operation. In groups where the operation is normally known as addition (such as elliptic curves), we will write $a x$ and $b x$ instead.)
@@ -213,10 +226,13 @@ This is named the Diffie-Hellman problem. If the discrete log problem can be sol
 
 Consider the following case where anything sent between Alice and Bob can be seen by Eve. Alice knows that $17^123 equiv 407$, but only sends Bob $407$. Bob knows that $17^456 equiv 24$, but only sends Alice $24$. After exchanging their information, Alice can compute $24^123 equiv 578$, and Bob can also compute $407^456 equiv 578$. Eve, only intercepting the numbers $17, 407, 24$ in their communication, is unable to calculate the secret number $578$ without solving the Diffie-Hellman problem.
 
-#figure(image("Diffie-Hellman.svg", width: 80%), caption: [A diagram describing the Diffie-Hellman Key Exchange process.])
+#figure(image("Diffie-Hellman.svg", width: 80%), caption: [Diagram by author, a description of the Diffie-Hellman Key Exchange process.])
 
+\
 
 To generalize, the Diffie-Hellman Key Exchange utilizes the difficulty of the Diffie-Hellman problem. Under an agreed upon group $G$ and base $x in G$, two parties Alice and Bob can establish a shared secret. Alice can generate an exponent $a$ and send Bob $x^a$, while Bob can generate a secret exponent $b$ and send Alice $x^b$. Together, they can both compute $x^(a b)$ as their shared secret securely, even if Eve is able to intercept this communication.
+
+The specific example we did is done in $FF_1009^times$. In reality, the size of the field will be much larger to prevent anyone from trivially breaking the exchange and finding the secret @friedl_diffie-hellman_2006@velvindron_increase_2017. The more general technique of performing Diffie-Hellman on the multiplicative subgroup of a finite field is called Finite Field Diffie-Hellman. We will describe another technique named Elliptic Curve Diffie-Hellman later, but first, we can consider ways to break the current example.
 
 /*With the Diffie-Hellman problem, Alice can establish a shared secret with Bob by having both generate their own secret exponent - either $a$ or $b$. Alice can secretly generate $a$ and send Bob $x^a$, while Bob can secretly generate $b$ and send Alice $x^b$.
 
@@ -237,7 +253,7 @@ stroke: 1pt, width: 100%, height: 100%, inset: 1em))
 
 == Index Calculus
 
-Diffie-Hellman Key Exchange on Finite Fields normally uses groups $FF_p$ where $2^2048 <= p <= 2^8192$ @friedl_diffie-hellman_2006@velvindron_increase_2017. The size of the prime ensures that solving DLP is inefficient. Below we will describe Index Calculus, which efficiently solves DLP for smaller finite fields.
+Diffie-Hellman Key Exchange on Finite Fields normally uses groups $FF_p$ where $2^2048 <= p <= 2^8192$ @friedl_diffie-hellman_2006@velvindron_increase_2017. The large size of the prime ensures that solving DLP is inefficient. Below we will describe Index Calculus, which efficiently solves DLP for smaller finite fields.
 
 It is best to illustrate with an example. We'll reuse the one presented earlier:
 
@@ -251,6 +267,8 @@ $
 17^L(x) equiv x" (mod 1009)"
 $
 
+Therefore, our goal is to find $L(24)$.
+
 Note that when we have
 
 $
@@ -261,7 +279,7 @@ So then $
 17^(L(x) + L(y) - L(x y)) equiv 1" (mod 1009)"
 $
 
-Because $|17| = 1008$, we have
+Because $|17| = 1008$, we have (notice the change in modulus from $1009$ to $1008$)
 
 $
 L(x) + L(y) - L(x y) &equiv 0&" (mod 1008)"\
@@ -279,7 +297,7 @@ $
 17^36 &equiv 2^2 dot 7^2&" (mod 1009)"\
 $
 
-Applying $L$ to both sides of the equations, we obtain (notice the change in modulus from $1009$ to $1008$)
+Applying $L$ to both sides of the equations, we obtain
 
 $
 15 &equiv 2 L(2) + L(5) + L(13)&" (mod 1008)"\
@@ -304,7 +322,9 @@ $
 L(24) = 456 = n
 $
 
-Therefore, we indeed arrive at the answer $n = 456$. As seen above, this method relies on the property that prime factorizations always exist, which may not apply to ellpitic curves.
+Therefore, we indeed arrive at the answer $n = 456$. As seen above, this method relies on the property that prime factorizations always exist, which does not apply to most ellpitic curves. // TODO cite MOV curves
+
+For the example above, we examined exponents of $17$ up to $17^36$, and also computed $17 dot 24$ and $17^24$. This takes significantly less time than enumerating $17^n$ for all $n$ until we reach 456. Therefore, Index Calculus is much more efficient than brute-forcing.
 
 We've just descibed the basic algorithm for Index Calculus, there is a more sophisticated method called General Number Field Sieve which builds upon index calculus. GNFS is in general more efficient than simple index calculus for large primes @nguyen_index_2005. The number of operations expected for the GNFS algorithm can be written as @lenstra_l-notation_2005:
 
@@ -312,7 +332,7 @@ $
 exp((64\/9)^(1\/3)(ln p)^(1\/3)(ln ln p)^(2\/3))
 $
 
-where $p$ is the prime that defines the finite field in $FF_p$. For a field with $p = 2^2048$, it will take about $1.5 dot 10^35 approx 2^117$ operations. In later sections, we will take a look at Diffie-Hellman done on elliptic curves and how the number of operations needed to solve the discrete log problem on elliptic curves compares with Diffie-Hellman on finite fields.
+where $p$ is the prime that defines the finite field in $FF_p$. For a field with $p = 2^2048$, the expected running time for GFNS to solve the Discrete Log would take about $1.5 dot 10^35 approx 2^117$ operations. In later sections, we will take a look at Diffie-Hellman done on elliptic curves and how the number of operations needed to solve the discrete log problem on elliptic curves compares with Diffie-Hellman on finite fields.
 
 = Elliptic Curve Cryptography
 
@@ -404,9 +424,9 @@ Perhaps the most surprising result of defining this operation is that the operat
 
 Bézout's theorem states that in general two plane curves given in the equations $a(x, y) = 0$ and $b(x, y) = 0$ with degrees $d_a$ and $d_b$ will have $d_a d_b$ intersections. 
 
-Formally, the group of elliptic curves can be defined in projective space where the point at infinity can be treated like any other point. For ease of presentation, the point at infinity will be denote as $O$.
+Formally, the group of elliptic curves can be defined in projective space where the point at infinity can be treated like any other point. For ease of presentation, the point at infinity will be denoted as $O$.
 
-#figure(image("Screenshot_20240626_152533.png"), caption: [Graphical proof of associativity])
+#figure(image("Screenshot_20240626_152533.png"), caption: [By author, graphical proof of associativity])
 
 Note that the intersections between the blue lines and the curve are $(P+Q)*R$, $P$, $Q$, $R$, $Q*R$, $Q+R$, $P*R$, $P+Q$, and $O$.
 
