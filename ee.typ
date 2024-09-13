@@ -366,7 +366,7 @@ $
 x_3 = m^2 - x_1 - x_2
 $
 
-In the group law, the $y$ coordinate of the resulting point is flipped: (TODO: explain why)
+To find the $y$-coordinate, we use the original line, equation, while flipping the resulting $y$-coordinate. This will be important to us later since flipping the $y$ coordinate results in the operation being associative.
 
 $
 y_3 = -(m(x_3 - x_1) + y_1) = m(x_1-x_3) - y_1
@@ -400,13 +400,14 @@ And $
 y_3 = -(m(x_3 - x_1) + y_1) = m(x_1 - x_3) - y_1
 $
 
-Therefore, we can begin to define a group law for points on elliptic curves.
+Therefore, we can begin to define a group law for points on elliptic curves. A "point at infinity" is added to the normal set of points on the curve, so that the group is well-defined for operations on all points. In projective geometry, a point at infinity is derived from the geometric assumption that parallel lines "meet at infinity".
 
 Let $C: y^2 = x^3 + A x + B$ be the elliptic curve with the set of points that satisfy the given equation. We now show that $C union {infinity}$ forms a group.
 
 Let $P_1 = (x_1, y_1)$ and $P_2 = (x_2, y_2)$ be two points that are on the curve. Define $P_3 = P_1 + P_2$ to be as follows:
 
-- If $P_1 = P_2 = (x_1, y_1)$, let $
+- If $P_1 = P_2 = (x_1, 0)$, let $P_3 = infinity$.
+- If $P_1 = P_2 = (x_1, y_1)$ where $y_1 != 0$, let $
 
 P_3 = (m^2 - 2x_1, m(x_1-x_3)-y_1), "where " m = (3x_1^2 + A)/(2y_1)
 
@@ -418,7 +419,7 @@ $
 
 Additionally, define $P_1 + infinity = infinity + P_1 = P_1$, as well as $infinity + infinity = infinity$.
 
-Perhaps the most surprising result of defining this operation is that the operation is associative, that is, $(P_1 + P_2) + P_3 = P_1 + (P_2 + P_3)$ for any three points $P_1, P_2, P_3$ that belong to the set $C union { infinity }$. Proving this algebraicly becomes very tedious, but there is a geometric argument using cubics and Bézout's theorem for the case where the points are distinct and none of them have the same $x$ value.
+Perhaps the most surprising result of defining this operation is that the operation is associative, that is, $(P_1 + P_2) + P_3 = P_1 + (P_2 + P_3)$ for any three points $P_1, P_2, P_3$ that belong to the set $C union { infinity }$. Proving this algebraicly becomes very tedious, but there is a geometric argument using cubic space curves and Bézout's theorem for the case where the points are distinct and none of them have the same $x$ value. A proof is outlined below.
 
 == Proof of Associativity
 
@@ -428,42 +429,34 @@ $
 a x^3 + b x^2 y + c x y^2 + d y^3 + e x^2 + f x y + g y^2 + h x + i y + j = 0 
 $
 
-A consequence of Bézout's theorem states that two cubic space curves intersect at 9 points, counting multiplicities such as self-intersections. In our case, we ignore multiplicities so the curves will intersect at 9 distinct points.
+Since an elliptic curve is given by $x^3 + A x + B - y^2 = 0$, an elliptic curve is also a cubic space curve.
 
-We now summarize the proof of the follow theorem in @silverman_rational_2015:
+A consequence of Bézout's theorem states that two cubic space curves intersect at 9 points, counting multiplicities such as self-intersections. In our case, we ignore multiplicities so the curves will intersect at 9 distinct points. We now summarize the proof of the follow theorem in @silverman_rational_2015, used for proving associativity:
 #quote(block: true)[
   Let $C$, $C_1$, $C_2$ be cubic space curves. Suppose $C$ goes through eight of the nine intersection points between $C_1$ and $C_2$. Then $C$ also goes through the nineth intersection point.
 ]
 
-This theorem is used in the graphical proof of associativity in elliptic curves.
-
-Firstly, note that a total of 10 coefficients were used in the formula for a cubic space curve: $a, b, c, d, e, f, g, h, i, j$. If the equation is scaled by a linear factor, it results in the same curve, so we can say that this curve is nine-dimensional (constrained by nine linear factors).
-
-Constraining a curve to go through a single point reduces its dimension by one, therefore the set of all curves that go through eight specific points is one-dimensional.
+Firstly, note that a total of 10 coefficients were used in the formula for a cubic space curve: $a, b, c, d, e, f, g, h, i, j$. If the equation is scaled by a linear factor, it results in the same curve, so we can say that this curve is nine-dimensional (constrained by nine linear factors). Constraining a curve to go through a single point reduces its dimension by one, therefore the set of all curves that go through eight specific points is one-dimensional.
 
 Suppose $C_1$ is specified by the equation $F_1(x, y) = 0$ and $C_2$ by $F_2(x, y) = 0$. Then any intersection point $(x_1,y_1)$ will satisfy $F_1(x_1, y_1) = F_2(x_1, y_1) = 0$. Therefore, a linear combination of the two functions will result in a cubic space curve that goes through the eight intersection points: $F_3 = lambda_1 F_1 + lambda_2 F_2$. Since this linear combination also represents a one-dimentional family of cubic space curves, it follows that $C$ must also be specified by $F_3(x, y) = 0$ for specific factors $lambda_1$ and $lambda_2$.
 
-Since we know that the nineth intersection point also satisfies $F_3(x, y) = 0$, we know that $C$ goes through the nineth intersection point.
+Since we know that the nineth intersection point also satisfies $F_3(x, y) = 0$, we know that $C$ goes through the nineth intersection point. $square$
 
-Now, we use this theorem to prove that the elliptic curve point addition operation is associative.
-
-Formally, the group of elliptic curves can be defined in projective space. There is a point at infinity which also satsify certain geometric properties including Bézout's theorem. For ease of presentation, the point at infinity will be denoted as $O$ and shown in the diagram.
+Now, we use this theorem to prove that the elliptic curve point addition operation is associative. Normally, the point at infinity is not shown in diagrams, but since it follows Bézout's theorem and for ease of presentation, the point will be denoted as $O$ in the diagram.
 
 #figure(image("Screenshot_20240626_152533.png"), caption: [By author, graphical proof of associativity])
 
-On the elliptic curve, we first start with three points, $P$, $Q$, and $R$. To create $Q * R$ and $P * Q$, we draw a line between the two points and take the third intersection point on the curve as the result. To find $Q + R$ and $P + Q$, we take the starred point ($Q * R$ for example), draw a line from it to $O$, then take the third intersection point. Note that this is equivalent to "flipping" the intersection point used in the definition of elliptic curve addition.
+On the elliptic curve, we start with three arbitrary points, $P$, $Q$, and $R$. The $*$ operation takes two points, draws a line through them, then use the third intersection point on the elliptic curve as a result. Through this, we create $Q * R$ and $P * Q$. To find $Q + R$ and $P + Q$, we take the starred point ($Q * R$ for example), draw a line from it to $O$, then take the third intersection point. Note that this is equivalent to "flipping" the intersection point used in the definition of elliptic curve addition.
 
-$(P + Q) * R$ is formed through finding the third intersection in the line between $P + Q$ and $R$, and $P * (Q + R)$ is formed through finding the third intersection in the line between $P$ and $Q + R$. Proving that these two points are equal proves associativity.
+With the same $*$ operation, we create $(P + Q) * R$ and $P * (Q + R)$. Proving that these two points are equal proves associativity. 
 
-Next, we draw six lines. The three blue lines go through $(P+Q)*R$, $P$, $Q$, $R$, $Q*R$, $Q+R$, $P*R$, $P+Q$, and $O$. The three black lines $P * (Q + R)$, $P$, $Q$, $R$, $Q*R$, $Q+R$, $P*R$, $P+Q$, and $O$.
-
-Three lines form a cubic space curve:
+Next, we draw six lines. The three blue lines go through $(P+Q)*R$, $P$, $Q$, $R$, $Q*R$, $Q+R$, $P*R$, $P+Q$, and $O$. The three black lines $P * (Q + R)$, $P$, $Q$, $R$, $Q*R$, $Q+R$, $P*R$, $P+Q$, and $O$. Three lines form a cubic space curve:
 
 $
 (y - (m_1 x + b_1))(y - (m_2 x + b_2))(y - (m_3 x + b_3)) = 0
 $
 
-Let $C_1$ be the elliptic curve (itself a cubic space curve), and let $C_2$ be the cubic space curve formed through the three black lines. As $C$, the cubic space curve formed through the three blue lines, go through eight of the nine points that are intersections between $C_1$ and $C_2$: $P$, $Q$, $R$, $Q*R$, $Q+R$, $P*R$, $P+Q$, and $O$, the last point of intersection must be same. The last point on $C_2$ is denoted $P * (Q + R)$, while the last point on $C$ is denoted $(P + Q) * R$, therefore, we have proven $P * (Q + R) = (P + Q) * R$, which implies $P + (Q + R) = (P + Q) + R$, proving the associativity.
+Let $C_1$ be the elliptic curve (itself a cubic space curve), and let $C_2$ be the cubic space curve formed through the three black lines. As $C$, the cubic space curve formed through the three blue lines, go through eight of the nine points that are intersections between $C_1$ and $C_2$: $P$, $Q$, $R$, $Q*R$, $Q+R$, $P*R$, $P+Q$, and $O$, the last point of intersection must be same point. The last point on $C_2$ is denoted $P * (Q + R)$, while the last point on $C$ is denoted $(P + Q) * R$, therefore, we have proven $P * (Q + R) = (P + Q) * R$, which implies $P + (Q + R) = (P + Q) + R$, proving the associativity. $square$
 
 == Group of elliptic curve points
 
@@ -474,21 +467,21 @@ Therefore, $C union {infinity}$ forms a group since:
 3. Every element has an inverse: let $P_a = (x, y)$, its inverse is $-P_a = (x, -y)$. We know that $-P_a in C$ since the curve is given as $y^2 = x^3 + A x + B$ and swapping $y$ with $-y$ will still hold.
 4. The operation is associative.
 
-Since elliptic curve points form a group, cryptographic techniques such as diffie-hellman key exchange which relies on group operations can also be applied to elliptic curves.
+Since elliptic curve points form a group, cryptographic techniques such as Diffie-Hellman Key Exchange which relies on group operations can also be applied to elliptic curves.
 
-== Elliptic curve diffie-hellman
+== Elliptic Curve Diffie-Hellman
 
-One important difference between elliptic curve operations and modular multiplicative group operations is in notation. In elliptic curve, the operation is commonly represented as addition of two points. Therefore $A + B$ is the normal operation on two points $A$ and $B$ while $k A$ is the operation repeated (e.g. $2A = A + A$). In the multiplicative group modulo $p$, the correspondence goes to $A B$ and $A^k$. Thus, in previous sections about the multiplicative groups, an operation such as $A^k$ will now be written as $k A$ in the context of elliptic curves.
+One important difference between elliptic curve operations and modular multiplicative group operations is in notation. In elliptic curves, the operation is commonly represented as addition of two points. Therefore $A + B$ is the normal operation on two points $A$ and $B$ while $k A$ is the operation repeated (e.g. $2A = A + A$). In the multiplicative group modulo $p$, it corresponds to $A B$ and $A^k$. Thus, in previous sections, an operation such as $A^k$ will now be written as $k A$ in the context of elliptic curves.
 
-With that note, diffie-hellman in elliptic curves follows the exact same procedure: two parties agree on a curve group to use, then decide on a base point $G$. Alice generates a secret integer $a$ and sends Bob $a G$. Bob generates a secret integer $b$ and sends Alice $b G$. They can now both calculate $a b G$, which cannot be known by third parties unless they can solve the discrete log problem in elliptic curves.
+With that note, Diffie-Hellman in elliptic curves follows the exact same procedure: two parties agree on a curve group to use, then decide on a base point $G$. Alice generates a secret integer $a$ and sends Bob $a G$. Bob generates a secret integer $b$ and sends Alice $b G$. They can now both calculate $a b G$, which cannot be known by third parties unless they can solve the discrete log problem in elliptic curves.
 
 // TODO: Example
 
 == Finding the Discrete Log with Pollard's $rho$ algorithm
 
-Pollard's $rho$ algorithm is a general algorithm for solving the discrete log problem for any abelian group. It is less efficient than the general number field sieve on discrete log in finite fields, taking $O(sqrt(N))$ time on average with $N$ being the order of the group. // TODO revisit
+Pollard's $rho$ algorithm is a general algorithm for solving the discrete log problem for any Abelian (commutative) group. It is less efficient than the general number field sieve on discrete log in finite fields, taking $O(sqrt(N))$ time on average in group $G$ where $|G| = N$. // TODO revisit
 
-We first take an example adapted from page 164 of Silverman and Tate's book: $y^2 = x^3 + 6692x + 9667$, in $F_10037$, with $P = (3354, 7358)$, $Q = (5403, 5437)$. Find $k$ such that $k P = Q$.#footnote[Originally a Montgomery equation, used substitution to turn it into the short Weierstrass form for consistency.]
+We first take an example adapted from page 164 of Silverman and Tate's book: $y^2 = x^3 + 6692x + 9667$, in $F_10037$, with $P = (3354, 7358)$, $Q = (5403, 5437)$. Find $k$ such that $k P = Q$.
 
 Generate 10 random points on the curve based on multiples of $P$ and $Q$:
 
@@ -531,7 +524,7 @@ With verification, we indeed have $1277P = Q$.
 
 = Evaluation
 
-Pollard's $rho$ algorithm on elliptic curve groups works on average with $sqrt(pi/4 N)$ elliptic curve additions with $N$ being the order for the base point $P$ @bernstein_correct_2011. On the other hand, the general number field sieve takes about $exp((64\/9)^(1\/3)(ln p)^(1\/3)(ln ln p)^(2\/3))$ in a prime field with order $p$. Assigning real numbers to these expressions, we can evaluate the current industry standards.
+Pollard's $rho$ algorithm on elliptic curve groups works on average with $sqrt(pi/4 N)$ elliptic curve additions with $N$ being the order for the base point $P$ @bernstein_correct_2011. On the other hand, the general number field sieve takes about $exp((64\/9)^(1\/3)(ln p)^(1\/3)(ln ln p)^(2\/3))$ in a prime field with order $p$. Assigning real numbers to these expressions, we can evaluate the current industry standards for cryptography.
 
 == Diffie-Hellman in TLS 1.3
 
@@ -543,32 +536,36 @@ The smallest finite field used by TLS for Diffie-Hellman is named ffdhe2048 @res
 p = 2^2048 - 2^1984 + (floor(2^1918 dot e) + 560316) dot 2^64 - 1
 $
 
-With the group size being $(p - 1) \/ 2$. If we computed the number of operations needed for the general number field sieve to run, we get approximately $2^117$ operations or that the field provides 117 bits of security. The original definition /* TODO from where? */ indeed has taken a conservative estimate that this provides 103 bits of security @gillmor_negotiated_2016.
+With the group size being $(p - 1) \/ 2$. If we computed the number of operations needed for the general number field sieve to run, we get approximately $2^117$ operations or equivalently, this provides 117 bits of security. The original definition of ffdhe2048 takes a more conservative estimate, and claims that this provides 103 bits of security @gillmor_negotiated_2016.
 
-As this field uses a prime 2048 bits of size, each group element requires 2048 bits of storage or 2KiB of storage.
+As this field uses a prime 2048 bits of size, each group element requires 2048 bits of storage.
 
 === Elliptic Curve Diffie-Hellman
 
-The smallest elliptic curve supported by TLS appears to be curve25519, using the prime $2^255 - 19$ as the field the elliptic curve is over, and the curve $y^2 = x^3 + 486662 x^2 + x$. The order of the group is $2^252 + 27742317777372353535851937790883648493$. As the fastest method to break the discrete logarithm takes $sqrt(pi/4 N)$ operations, this specific curve requires approximately $2^126$ operations to break, or providing 126 bits of security.
+The smallest elliptic curve supported by TLS appears to be curve25519, using the prime $p = 2^255 - 19$ as the field $FF_p$ the elliptic curve is over, and the curve $y^2 = x^3 + 486662 x^2 + x$. The order of the group is $2^252 + 27742317777372353535851937790883648493$. As the fastest method to break the discrete logarithm takes $sqrt(pi/4 N)$ operations, this specific curve requires approximately $2^126$ operations to break, or providing 126 bits of security.
 
-As elliptic curve points have coordinates under the prime field $2^255 - 19$, each coordinate requires 255 bits of storage, making the point requiring 510 bits of storage. Therefore, each group element requires approximately 0.5KiB of storage.
+As elliptic curve points have coordinates under the prime field $2^255 - 19$, each coordinate value requires 255 bits of storage, therefore an entire point (both $x$ and $y$ coordinates) would take about 510 bits of storage.
 
 == Performance of group operations
 
-Assume that multiplying two $256$-bit integers has cost $bold(C)$. Multiplication of two $2048$-bit integers thus will cost $64bold(C)$ as each $2048$-bit integer has $8$ $256$-bit digits and each digit from the first operand needs to multiply with the next operand.
+Assume that multiplying two $256$-bit integers has cost $bold(C)$. Multiplication of two $2048$-bit integers thus will cost $64bold(C)$ as each $2048$-bit integer has $8$ $256$-bit digits and each digit from the first operand needs to multiply with the next operand. // TODO cite
 
-The story in elliptic curves is much more complicated. Curve25519 follows the form $B y^2 = x^3 + A x^2 + x$ called a Montgomery curve. All curves of this form can be transformed into the short Weierstrass form but not the other way around. Detailed in @costello_montgomery_2018, the diffie-hellman key exchange protocol could be designed so that only the $x$-coordinate of each point in the process is needed, which simplifies the process by removing the need to compute $y$ coordinates. Under the arithmetic of only the $x$ coordinates of curve points, adding two curve points costs $3M + 2S + 3a + 3s$, where $M, S, a, s$ are costs for multiplying two numbers, squaring a number, adding two numbers, subtracting two numbers in the field the curve is defined on respectively. Assuming that the cost for addition and subtraction is negligible compared to multiplication, and assuming that squaring has approximately the same cost as multiplying two numbers,#footnote[In reality, squaring has slightly less costs than multiplying as the former can be optimized a bit more for efficiency.] the cost for adding two curve points is approximately $5M$. Note that the field is defined over $2^255 - 19$, so the cost of a multiplication $M$ (for two $255$-bit integers) can be considered as less than the cost of multiplying two $256$-bit integers. So we have $M < bold(C)$.
+The story in elliptic curves is much more complicated. Curve25519 follows the form $B y^2 = x^3 + A x^2 + x$ called a Montgomery curve. All curves of that form can be transformed into the short Weierstrass form we used in this paper but not the other way around. Detailed in @costello_montgomery_2018, the Diffie-Hellman Key Exchange protocol could be designed so that only the $x$-coordinate of each point in the process is needed, which simplifies the process by removing the need to compute $y$ coordinates. Under the arithmetic of only the $x$ coordinates of curve points, adding two curve points costs $3M + 2S + 3a + 3s$, where $M, S, a, s$ are costs for multiplying two numbers, squaring a number, adding two numbers, subtracting two numbers in the field the curve is defined on respectively. Assuming that the cost for addition and subtraction is negligible compared to multiplication, and assuming that squaring has approximately the same cost as multiplying two numbers, the cost for adding two curve points is approximately $5M$. Note that the field is defined over $2^255 - 19$, so the cost of a multiplication $M$ (for two $255$-bit integers) can be considered as less than the cost of multiplying two $256$-bit integers. So we have $M < bold(C)$.
 
 Note how adding two curve points only costs $5M$, while multiplying in finite fields costs $64bold(C)$. (approximately 13x difference) As performing the group operation is the primary backbone behind Diffie-Hellman key exchange, this performance difference can have huge implications.
 
-/* Doubling a curve point costs $2M + 2S + 1c + 3a + 1s$ where $c$ is the cost of multiplying by $(A + 2) / 4 = 121666$ for curve25519. For the same reason we assume that this costs approximately $4M$. */
-
 == Comparison
 
-The specific methods we have chosen to evaluate provide a general insight into the efficiencies of different methods of diffie-hellman key exchange. In general, elliptic curves take much less space to store, providing similar bits of security while using approximately four times less storage for each group element, and is able to perform group operations at much faster speeds, providing an approximate 13x speedup compared to older methods.
+The specific methods we have chosen to evaluate provide a general insight into the efficiencies of different methods of diffie-hellman key exchange. 
+
+Elliptic curves only require about 512 bits of storage for a full point, about 256 bits if only storing the $x$-coordinate, while in finite fields, each element requires 2048 bits of storage, taking 8x as much storage than elliptic curves.
+
+Adding two curve points compared to multiplying two finite field elements provide similar benefits in performance as well, with an approximate 13x speedup.
+
+Both of these advantages can be seen from the fact that the Discrete Log Problem is much harder on elliptic curves than in finite fields in general, which we have shown above through comparing the General Number Field Sieve and Pollard's $rho$ algotithm. As a consequence the latter requires much more space and time for their computations in order to provide the same level of security in the trade-off between efficiency and security.
 
 = Conclusion
 
-Elliptic curves offer a much better alternative to existing cryptographic methods and is representative of the progress mathematicians have made towards helping build a large system (i.e. the Internet) that scales. To answer the question of "To what extent can elliptic curves be used to establish a shared secret over an insecure channel", the answer is "Yes, and its fast and efficient."
+Elliptic curves offer a much better alternative to existing cryptographic methods and is representative of the progress mathematicians have made towards helping build a large system (i.e. the Internet) that scales. To answer the question of "To what extent can elliptic curves be used to establish a shared secret over an insecure channel", the answer is "Yes, and it is fast and efficient!"
 
 #bibliography("shortlist.bib")
