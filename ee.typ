@@ -322,7 +322,7 @@ $
 L(24) = 456 = n
 $
 
-Therefore, we indeed arrive at the answer $n = 456$. As seen above, this method relies on the property that prime factorizations always exist, which does not apply to most ellpitic curves. // TODO cite MOV curves
+Therefore, we indeed arrive at the answer $n = 456$. As seen above, this method relies on the property that prime factorizations always exist, which does not apply to most ellpitic curves. @washington_elliptic_2008[pp.~154-157]
 
 For the example above, we examined exponents of $17$ up to $17^36$, and also computed $17 dot 24$ and $17^24$. This takes significantly less time than enumerating $17^n$ for all $n$ until we reach 456. Therefore, Index Calculus is much more efficient than brute-forcing.
 
@@ -369,7 +369,7 @@ $
 In the group law, the $y$ coordinate of the resulting point is flipped: (TODO: explain why)
 
 $
-y_3 = -(m(x_3 - x_1) + y_1) =m(x_1-x_3) -y_1
+y_3 = -(m(x_3 - x_1) + y_1) = m(x_1-x_3) - y_1
 $
 
 Therefore, we have arrived at $P_3 = (x_3, y_3)$, a third point distinct from $P_1$ and $P_2$.
@@ -422,17 +422,48 @@ Perhaps the most surprising result of defining this operation is that the operat
 
 == Proof of Associativity
 
-Bézout's theorem states that in general two plane curves given in the equations $a(x, y) = 0$ and $b(x, y) = 0$ with degrees $d_a$ and $d_b$ will have $d_a d_b$ intersections. 
+A cubic space curve is given with the following formula @silverman_rational_2015:
 
-Formally, the group of elliptic curves can be defined in projective space where the point at infinity can be treated like any other point. For ease of presentation, the point at infinity will be denoted as $O$.
+$
+a x^3 + b x^2 y + c x y^2 + d y^3 + e x^2 + f x y + g y^2 + h x + i y + j = 0 
+$
+
+A consequence of Bézout's theorem states that two cubic space curves intersect at 9 points, counting multiplicities such as self-intersections. In our case, we ignore multiplicities so the curves will intersect at 9 distinct points.
+
+We now summarize the proof of the follow theorem in @silverman_rational_2015:
+#quote(block: true)[
+  Let $C$, $C_1$, $C_2$ be cubic space curves. Suppose $C$ goes through eight of the nine intersection points between $C_1$ and $C_2$. Then $C$ also goes through the nineth intersection point.
+]
+
+This theorem is used in the graphical proof of associativity in elliptic curves.
+
+Firstly, note that a total of 10 coefficients were used in the formula for a cubic space curve: $a, b, c, d, e, f, g, h, i, j$. If the equation is scaled by a linear factor, it results in the same curve, so we can say that this curve is nine-dimensional (constrained by nine linear factors).
+
+Constraining a curve to go through a single point reduces its dimension by one, therefore the set of all curves that go through eight specific points is one-dimensional.
+
+Suppose $C_1$ is specified by the equation $F_1(x, y) = 0$ and $C_2$ by $F_2(x, y) = 0$. Then any intersection point $(x_1,y_1)$ will satisfy $F_1(x_1, y_1) = F_2(x_1, y_1) = 0$. Therefore, a linear combination of the two functions will result in a cubic space curve that goes through the eight intersection points: $F_3 = lambda_1 F_1 + lambda_2 F_2$. Since this linear combination also represents a one-dimentional family of cubic space curves, it follows that $C$ must also be specified by $F_3(x, y) = 0$ for specific factors $lambda_1$ and $lambda_2$.
+
+Since we know that the nineth intersection point also satisfies $F_3(x, y) = 0$, we know that $C$ goes through the nineth intersection point.
+
+Now, we use this theorem to prove that the elliptic curve point addition operation is associative.
+
+Formally, the group of elliptic curves can be defined in projective space. There is a point at infinity which also satsify certain geometric properties including Bézout's theorem. For ease of presentation, the point at infinity will be denoted as $O$ and shown in the diagram.
 
 #figure(image("Screenshot_20240626_152533.png"), caption: [By author, graphical proof of associativity])
 
-Note that the intersections between the blue lines and the curve are $(P+Q)*R$, $P$, $Q$, $R$, $Q*R$, $Q+R$, $P*R$, $P+Q$, and $O$.
+On the elliptic curve, we first start with three points, $P$, $Q$, and $R$. To create $Q * R$ and $P * Q$, we draw a line between the two points and take the third intersection point on the curve as the result. To find $Q + R$ and $P + Q$, we take the starred point ($Q * R$ for example), draw a line from it to $O$, then take the third intersection point. Note that this is equivalent to "flipping" the intersection point used in the definition of elliptic curve addition.
 
-The intersections between the black lines and the elliptic curve are $P * (Q + R)$, $P$, $Q$, $R$, $Q*R$, $Q+R$, $P*R$, $P+Q$, and $O$.
+$(P + Q) * R$ is formed through finding the third intersection in the line between $P + Q$ and $R$, and $P * (Q + R)$ is formed through finding the third intersection in the line between $P$ and $Q + R$. Proving that these two points are equal proves associativity.
 
-As three lines form a cubic, and the two groups of three lines both intersect the same eight out of the nine points with the elliptic curve, it can be shown that the ninth point is the same for both cubics that intersect with the elliptic curve, thus proving that $(P+Q)*R = P * (Q + R)$. // TODO elaborate this reasoning
+Next, we draw six lines. The three blue lines go through $(P+Q)*R$, $P$, $Q$, $R$, $Q*R$, $Q+R$, $P*R$, $P+Q$, and $O$. The three black lines $P * (Q + R)$, $P$, $Q$, $R$, $Q*R$, $Q+R$, $P*R$, $P+Q$, and $O$.
+
+Three lines form a cubic space curve:
+
+$
+(y - (m_1 x + b_1))(y - (m_2 x + b_2))(y - (m_3 x + b_3)) = 0
+$
+
+Let $C_1$ be the elliptic curve (itself a cubic space curve), and let $C_2$ be the cubic space curve formed through the three black lines. As $C$, the cubic space curve formed through the three blue lines, go through eight of the nine points that are intersections between $C_1$ and $C_2$: $P$, $Q$, $R$, $Q*R$, $Q+R$, $P*R$, $P+Q$, and $O$, the last point of intersection must be same. The last point on $C_2$ is denoted $P * (Q + R)$, while the last point on $C$ is denoted $(P + Q) * R$, therefore, we have proven $P * (Q + R) = (P + Q) * R$, which implies $P + (Q + R) = (P + Q) + R$, proving the associativity.
 
 == Group of elliptic curve points
 
