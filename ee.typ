@@ -241,15 +241,14 @@ where $p$ is the prime that defines the finite field in $FF_p$. For a field with
 
 = Elliptic Curve Cryptography
 
-Let an elliptic curve be denoted by the equation $y^2 = x^3 + A x + B$ (named the short Weierstrass form) where $A$ and $B$ are constants. The curve is symmetric about the $x$-axis, since if $(x,y)$ is a point on the curve, $(x,-y)$ is also on the curve.
+The equation $y^2 = x^3 + A x + B$ (named the short Weierstrass form) where $A$ and $B$ are constants define an elliptic curve. The curve is symmetric about the $x$-axis, since if $(x,y)$ is a point on the curve, $(x,-y)$ is also on the curve.
 
-Let $P_1 = (x_1,y_1)$ and $P_2 = (x_2,y_2)$ be distinct points on the curve, where $x_1 !=x_2$. We can find a new point on the curve by defining a line that goes across the two points, with slope
+The idea of a group operation for two points on the curve comes from the idea of "finding a third point" on the curve, usually through drawing a line and finding another intersection with the curve. We now summarize the steps for defining a group law as shown in @washington_elliptic_2008[pp.~12-15].
+
+Let $P_1 = (x_1,y_1)$ and $P_2 = (x_2,y_2)$ be distinct points on the curve, where $x_1 !=x_2$. We can find a new point on the curve by defining a line that goes across the two points, with slope and line equation
 
 $
-m = (y_2 - y_1)/(x_2 - x_1)
-$
-
-And line equation $
+m = (y_2 - y_1)/(x_2 - x_1)\
 y = m(x-x_1) + y_1
 $
 
@@ -271,7 +270,7 @@ $
 x_3 = m^2 - x_1 - x_2
 $
 
-To find the $y$-coordinate, we use the original line, equation, while flipping the resulting $y$-coordinate. This will be important to us later since flipping the $y$ coordinate results in the operation being associative.
+To find the $y$-coordinate, we use the original line equation, but flip the resulting $y$-coordinate. This is important as otherwise the operation does not define a group @silverman_rational_2015[p.~12].
 
 $
 y_3 = -(m(x_3 - x_1) + y_1) = m(x_1-x_3) - y_1
@@ -336,7 +335,9 @@ $
 
 Since an elliptic curve is given by $x^3 + A x + B - y^2 = 0$, an elliptic curve is also a cubic space curve.
 
-A consequence of Bézout's theorem states that two cubic space curves intersect at 9 points, counting multiplicities such as self-intersections. In our case, we ignore multiplicities so the curves will intersect at 9 distinct points. We now summarize the proof of the follow theorem in @silverman_rational_2015, used for proving associativity:
+A consequence of Bézout's theorem states that two cubic space curves intersect at 9 points, counting multiplicities such as self-intersections. // TODO complete all these technicalities
+
+In our case, we ignore multiplicities so the curves will intersect at 9 distinct points. We now summarize the proof of the follow theorem in @silverman_rational_2015, used for proving associativity:
 #quote(block: true)[
   Let $C$, $C_1$, $C_2$ be cubic space curves. Suppose $C$ goes through eight of the nine intersection points between $C_1$ and $C_2$. Then $C$ also goes through the nineth intersection point.
 ]
