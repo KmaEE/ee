@@ -8,17 +8,23 @@
 #set text(font: "IBM Plex Sans")
 
 
+#v(1fr)
 
-#heading(outlined: false)[To what extent can elliptic curves be used to establish a shared secret over an insecure channel?]
+#align(center, text(17pt)[
+  *Securing Data Transfer with Elliptic Curves*
+])
 
-// TODO Title
-// TODO category
-// TODO see EE guide for cover page
+#align(center, text(10.7pt)[
+  To what extent can elliptic curves be used to establish a shared secret over an insecure channel?
+])
 
+#v(3fr)
+
+Mathematics
 
 #show: word-count.with()
 
-Words: #total-words
+Word count: #total-words
 
 #pagebreak()
 
@@ -28,23 +34,27 @@ Words: #total-words
 
 = Introduction
 
-Our society is built on cryptography. Cryptography is built on math. This essay will discuss the math behind the cryptography that is behind our society.
+As Alice tries to talk to Bob through her laptop, an adversary named Eve tries to eavesdrop their communication and steal sensitive information. Alice and Bob decide to use Diffie-Hellman Key Exchange, which allows them to establish a password for future communication, even if Eve can intercept all of their communication.
 
-Well, more specifically, _one_ specific method in cryptography, which provides _one_ functionality that is in such a broad use today. 99.3% of the top 1 million websites prefer this method over others to encrypt their users' internet connections with them.@warburton_2021_2021
+Diffie-Hellman is an important element within the collection of cryptographic methods that together bullet-proof Internet connections. 99.3% of the top 1 million websites prefer using Diffie-Hellman over others when it comes to establishing a shared secret @warburton_2021_2021.
 
-To take a look at why we want cryptography, let's situate ourselves in a time and place where Bob wants to send something to Alice, with an extra adversary named Eve. Eve dislikes Bob and Alice, and will try to get information from the communication in any way she can. One conventional cryptographic technique called _public key cryptography_ can help Bob in sending messages securely.
+To understand the effectiveness of Diffie-Hellman, we can compare it to a different scheme named _public key cryptography_ which can also help Alice secure her messages with Bob.
 
-Under public key cryptography, Alice and Bob both have a pair of keys, one key that is known by the public called their public key, and one key that is kept as a secret called the private key. Under this system, Bob can use cryptographic methods based on Alice's public key to encrypt a message that only Alice can decrypt using her private key.
+With public key cryptography, Alice can use Bob's public key to encrypt a message that only Bob can decrypt using his private key. Bob can then use Alice's public key to send a message that only Alice can decrypt with her own private key, which facilitates secure communication @sako_public_2005.
 
-There are some disadvantages to this method. One is that encryption using public keys is often slower than _symmetric cryptography_, where a password only known to both sides is used to encrypt  and decrypt messages instead. A simple solution for this scenario would be Bob could create a password, use Alice's public key to send this password securely to her, and then use the password for future communications.@sako_public_2005
+There are some disadvantages to this method. One is that encryption using public keys is
+often slower than _symmetric cryptography_, where if Alice and Bob share a password,
+they can both encrypt their messages with the same password. Because using a password is
+faster, Alice can first use Bob's public key to send a password, then together opt to
+use password based encryption instead.@sako_public_2005
 
-But that can also be insecure. If Eve keeps a record of all encrypted messages sent between Bob and Alice, and she obtains Alice's private key, she will be able to decrypt the passwords, and therefore the messages. On cryptographic terms, we say that this method does not have _forward secrecy_.
+Suppose Eve kept a record of all encrypted messages sent between Alice and Bob, and Eve obtains Alice's private key in some way in the future. Eve will be able to decrypt all the passwords, and therefore all the messages. On cryptographic terms, we say that this method does not have _forward secrecy_.@krawczyk_perfect_2005
 
-But then there came Diffie and Hellman. With the cryptographic technique called Diffie-Hellman Key Exchange in their papers, Alice and Bob can quickly establish a password, while Eve is unable to obtain the password just from inspecting their communication. This is great for Alice and Bob, as they can generate a password each time they communicate. If Eve ever finds out the password for one of their messages, she would not be able to decrypt the other messages.@krawczyk_perfect_2005@just_diffiehellman_2005
+With Diffie-Hellman Key Exchange, Alice and Bob can quickly establish a password without using any public and private keys, and Eve would still be unable to obtain the password just from inspecting the communication. This is great for Alice, as she can generate a password each time she talks to Bob. If Eve ever finds out the password for one of their messages, she would not be able to decrypt the other messages.@krawczyk_perfect_2005@just_diffiehellman_2005
 
-Diffie-Hellman Key Exchange is designed specifically so that people can establish a shared secret (the password between Alice and Bob) over an insecure channel (a communication method that Eve can eavesdrop). Note that additional cryptographic techniques are used to prevent _tampering_, in a situation where Eve can modify any messages sent between Alice and Bob. Tampering, and methods that are resistant to it, are out of scope for this paper.
+Diffie-Hellman Key Exchange is designed specifically so that people can establish a shared secret (the password between Alice and Bob) over an insecure channel (a communication method that Eve can eavesdrop).
 
-Diffie-Hellman takes on different forms. There is Finite Field Diffie-Hellman and Elliptic Curve Diffie-Hellman. We'll look at both techniques and compare the two methods in terms of how efficient they are (how much data does Alice and Bob need to send to each other?) and how fast they are (how quickly can Alice and Bob calculate the shared password in an exchange?)
+Diffie-Hellman takes on different forms. There is Finite Field Diffie-Hellman and Elliptic Curve Diffie-Hellman. To answer our research question, we'll look at both techniques and compare the two methods in terms of how efficient they are (how much data does Alice and Bob need to send to each other?) and how fast they are (how quickly can Alice and Bob calculate the shared password in an exchange?)
 
 = Group Theory
 
@@ -62,7 +72,7 @@ $
 a dot a^(p-2) equiv 1 " " (mod p)
 $
 
-Thus, under multiplication modulo $p$, any integer $a$ multiplied by $a^(p-2)$ results in 1. As 1 is the multiplicative identity ($1 dot x = x$), $a^(p-2)$ is said to be $a$'s _multiplicative inverse_. Consider the set of numbers from $1$ to $p - 1$. Every number $a$ has a multiplicative inverse $a^(p-2)$ modulo $p$; The set contains an identity element ($1$); Multiplication is associative ($a dot (b dot c) = (a dot b) dot c$); And each multiplication will always result in a number between $1$ to $p - 1$ since it is performed modulo $p$. These properties, existence of an identity element and inverses, associativity, and the closure of operations, are exactly the properties that define a group.
+Thus, under multiplication modulo $p$, any non-zero integer $a$ multiplied by $a^(p-2)$ results in 1. As 1 is the multiplicative identity ($1 dot x = x$), $a^(p-2)$ is said to be $a$'s _multiplicative inverse_. Consider the set of numbers from $1$ to $p - 1$. Every number $a$ has a multiplicative inverse $a^(p-2)$ modulo $p$; The set contains an identity element ($1$); Multiplication is associative ($a dot (b dot c) = (a dot b) dot c$); And each multiplication will always result in a number between $1$ to $p - 1$ since it is performed modulo $p$ (closure). These properties, existence of an identity element and inverses, associativity, and the closure of operations, are exactly the properties that define a group.
 
 A group is, at its core, a set. We'll use some of the same language with sets, for example the $in$ symbol and the word _element_. We will refer to the specific group we discussed above as $ZZ_p^times$. The subscript is the _modulus_ of operations, while the superscript specifies the operation. In a similar vein, $ZZ_p^+$ refers to the same set of numbers (though also including the number $0$, unlike multiplication), but specifies addition as its group operation.
 
@@ -72,7 +82,7 @@ The _order_ of a specific element $x$, refers to the smallest integer $k$ such t
 
 == The Discrete Log Problem
 
-Under a specific group $ZZ_1009^times$, we ask for an integer $n$ for which $17^n = 24$. In this case,
+Under a specific group $ZZ_1009^times$, we are asked to find an integer $n$ for which $17^n = 24$. In this case,
 
 $
 17^(456) equiv 24 " " (mod 1009)
@@ -86,119 +96,13 @@ $
 
 Given this problem, one might take the brute-force approach, repeatedly performing the group multiplication, calculating $a^2$, $a^3$, $a^4$ and and comparing each with $b$. In the example problem, it would take $455$ multiplications before finally arriving at the answer. Assume the algorithm is tasked to solve questions of this kind repeatedly with the exponent $n$ taken at random. This algorithm would take on average $1/2|a|$ operations. As the order $|a|$ gets big (towards numbers as big as $2^200$), this approach quickly becomes infeasible.
 
-The assumption that the discrete log cannot be solved trivially in specific groups is the core of cryptographic protocols and algorithms. There are known techniques better than a brute-force search which can solve the discrete log problem either for specific groups or for all groups in general. We shall discuss those methods in a later section, though cryptography is done on well-chosen groups such that even those more advanced attacks become infeasible.
-
-
-
-/* Addition within the set of integers satisfy certain algebraic properties:
-
-1. There exists an identity. For addition, $0$ is the identity becuase $0 + a = a$.
-2. The operation is associative, where $(a + b) + c = a + (b + c)$.
-3. Every element has an inverse that is also within the set. For any $a in ZZ$, $-a$ is its inverse because $a + (-a) = 0$ where $0$ is the identity element.
-4. Closure. For any $a, b in ZZ$, we have $a + b in ZZ$ as well, therefore the operation will never output a value that leaves the $ZZ$ set.
-
-These four conditions satisfy the requirements for a _group_. We can say that the set of $ZZ$ forms a group under addition. Note that $ZZ$ does _not_ form a group under multiplication, because although it satisfies three of the properties: $1$ is the identity, the operation is associative, and for all $a,b in ZZ, a b in ZZ$ (closure), the inverse property is not satisfied.
-
-For $2$ to have an inverse, there would need to be $a in ZZ$ such that $2  times a = 1$, the identity element. Such an $a$ doesn't exist when $a$ needs to be an integer.
-
-However, we can restrict our set to make it form a group. Consider the numbers ${1, 2, 3, .., n - 1}$ with multiplication modulo $n$, where $n$ is a prime number. We will write this set as $ZZ_n$.
-
-For any $a in ZZ_n$, we have $1 times a = a$, therefore $1$ can be considered as the identity element. The operation is associative in the same way multiplication is associative, with the assumption that multiplying two numbers modulo $n$ is equivalent to multiplying in $ZZ$ then finding the result modulo $n$. Then, as $(a b)c = a(b c)$, we can say $(a b) c = a (b c) " "(mod n)$.
-
-Finding an inverse for an element in $ZZ_n$ requires the use of Fermat's Little Theorem, which states
-
-$
-a^(n-1) equiv 1 " "(mod n)
-$
-
-when $n$ is prime. Then, we can write $a times a^(n-2) equiv 1 " "(mod n)$. For any $a in ZZ_n$, $a^(n-2)$ is its inverse as the product of $a$ and $a^(n-2)$ gives the identity. It's trivial to show that $ZZ_n$ is closed under multiplication, therefore we can state that the set of non-zero integers modulo $n$ forms a group under multiplication. 
-
-== Introduction
-// TODO cite
-Internet connections and data go through Internet Service Providers (ISP) which snoop on users' information. [citation needed] An often used method to prevent eavesdropping is through TLS, commonly known as the green padlock next to the address bar or HTTPS, [citation needed] which establishes a secure connection between the user and the website that they are connecting to, such that the ISP only knows which website they have connected to but does not know the content that the user has downloaded or uploaded.
-
-TLS has many different cryptographic techniques to establishing a secure connection. One of which is the Elliptic Curve Diffie-Hellman (ECDH). In this paper, we will examine the mathematical theory underlying the ECDH operation and evaluate its practical application in cybersecurity.
-
-== The Discrete Log Problem in $ZZ_p^times$
-
-As a consequence of Fermat's Little Theorem, we can write:
-// todo spacing
-$
-a^(p-1) equiv 1 " " (mod p)\
-a dot a^(p-2) equiv 1 " " (mod p)
-$
-
-// TODO cite
-For any integer $a$ and prime $p$. We have found $a^(p-2)$ as $a$'s multiplicative inverse, therefore integers modulo $p$ with multiplication forms a group, as the operation is associative, has an identity element, and every element has an inverse. This group is represented with the symbol $ZZ_p^times$.
-
-Given a base $17$ and a value $24$, we can ask the following question:
-
-$
-17^n equiv 24 " "(mod 1009)
-$
-
-This is called the Discrete Log Problem in $ZZ_p^times$, and in this case $p = 1009$. It is an open cryptographic problem to be able to solve this problem in large $p$ quickly. 
-
-A method named pollard's $rho$ algorithm exists which we can use to find the answer. First, we generate random integers as exponents and write $M$:
-
-$
-M_1 = (17)^5 (24)^11\
-M_2 = (17)^20 (24)^7\
-M_3 = (17)^13 (24)^6\
-M_4 = (17)^11 (24)^16\
-M_5 = (17)^3 (24)^12
-$
-
-// todo probably rename P to x
-
-Then, define $
-f(x) = x M_i "if " x equiv i " " (mod 5)
-$
-
-This essentially gives a "random walk" of the group. Choose $P_0 = (17^3)(24^14)$, then define $
-P_(n+1) = f(P_n)
-$
-
-We note that $P_61 = P_99 = 340$. If we kept track of the exponents on $17$ and $24$ in the calculations, we get
-
-$
-P_61 = (17^691)(24^704) = (17^1075)(24^1132) = P_99
-$
-
-Then
-
-$
-17^(-384) = 24^(428)
-$
-
-Rewrite $24 = 17^k$
-
-$
-17^(-384) = 17^(428k)\
-17^(428k + 384) = 1
-$
-
-Note that $17$ has order $1008$ in the multiplicative group modulo 1009, therefore we write
-
-$
-428 k + 384 = 0 " "(mod 1008)
-$
-
-// TODO
-(pollards rho, from Washington)
-
-Given $a$ and $b$ are non-zero integers from this group, the discrete log problem asks us to find $k$ such that
-
-$
-a^k equiv b " " (mod p)
-$
-
-
-The assumption is that this problem is difficult to compute if the group and the exponent are well-chosen. This is used as the _trapdoor function_ in cryptography, as it is assumed to be easy to compute in one direction and hard to compute in the other. We'll evaluate the extent to which this claim is true for $ZZ_p^times$ in later sections, but we'll start with this assumption. */
+The assumption that the discrete log cannot be solved trivially in specific groups is the core of cryptographic protocols and algorithms. There are known techniques better than a brute-force search which can solve the discrete log problem either for specific groups or for all groups in general, which are described in later sections. Modern cryptography uses larger, more secure groups to make those attacks infeasible.
 
 = Finite Field Cryptography and Attacks
 
-The term _finite field_ refers to the fact that the set of numbers from 1 to $p - 1$, alongside with zero, form another group under addition. Moreover, multiplication is distributive over addition: $a(b + c) = a b + a c$ mod $p$. A field is a set of elements that forms a group under addition and its non-zero elements forms a group under multiplication, where multiplication distributes over addition. The field of integers modulo $p$ is written as $FF_p$. Note that $|FF_p| = p$ due to the inclusion of zero. We use $FF_p^times$ to explicitly refer to the multiplicative subgroup where $|FF_p^times| = p-1$.
+The term _finite field_ refers to the fact that the set of numbers from $0$ to $p - 1$ with $p$ prime, forms a group under addition modulo $p$ while $1$ to $p - 1$ forms a group under multiplication modulo $p$. Moreover, multiplication is distributive over addition: $a(b + c) = a b + a c$ mod $p$. A field in general is a set, whether finite or infinite, that satisfies these three conditions @kaliski_field_2011@kaliski_ring_2011.
+
+The field of integers modulo $p$ (a finite field) is written as $FF_p$. We use $FF_p^times$ to explicitly refer to the multiplicative subgroup (equivalent to $ZZ_p^times$ used above) @kaliski_finite_2011.
 
 == Diffie-Hellman Key Exchange
 
@@ -216,7 +120,7 @@ $
 
 More generally, if we know $17^a$ and the exponent $b$, or if we know $17^b$ and the exponent $a$, it would be possible for us to know $17^(a b)$. But just being given $17^a$ and $17^b$ in this case would make it less trivial.
 
-This problem of finding $x^(a b)$ when just given $x$, $x^a$, and $x^b$ is named the Diffie-Hellman problem, and it is not hard to see that the difficulty of this problem relates to the difficulty of the Discrete Log Problem, since solving the Discrete Log would give us the answer to the Diffie-Hellman problem. Assuming the Diffie-Hellman problem is difficult, we can use this to setup a cryptographic exchange. 
+This problem of finding $x^(a b)$ when just given $x$, $x^a$, and $x^b$ is named the Diffie-Hellman problem, and it is not hard to see that the difficulty of this problem relates to the difficulty of the Discrete Log Problem, since solving the Discrete Log would give us the answer. Assuming the Diffie-Hellman problem is difficult, we can use this to setup a cryptographic exchange. 
 
 /*
 Given a known base $x$ within a group $G$, one cannot trivially obtain $x^(a b)$ from just $x^a$ and $x^b$ if the integers $a$ and $b$ are not known. (Exponentiation here means repeated application of the group operation. In groups where the operation is normally known as addition (such as elliptic curves), we will write $a x$ and $b x$ instead.)
@@ -232,7 +136,7 @@ Consider the following case where anything sent between Alice and Bob can be see
 
 To generalize, the Diffie-Hellman Key Exchange utilizes the difficulty of the Diffie-Hellman problem. Under an agreed upon group $G$ and base $x in G$, two parties Alice and Bob can establish a shared secret. Alice can generate an exponent $a$ and send Bob $x^a$, while Bob can generate a secret exponent $b$ and send Alice $x^b$. Together, they can both compute $x^(a b)$ as their shared secret securely, even if Eve is able to intercept this communication.
 
-The specific example we did is done in $FF_1009^times$. In reality, the size of the field will be much larger to prevent anyone from trivially breaking the exchange and finding the secret @friedl_diffie-hellman_2006@velvindron_increase_2017. The more general technique of performing Diffie-Hellman on the multiplicative subgroup of a finite field is called Finite Field Diffie-Hellman. We will describe another technique named Elliptic Curve Diffie-Hellman later, but first, we can consider ways to break the current example.
+The specific example we did is done in $FF_1009^times$. In reality, the size of the field will be much larger to prevent anyone from trivially breaking the exchange and finding the secret @friedl_diffie-hellman_2006@velvindron_increase_2017. The more general technique of performing Diffie-Hellman on the multiplicative subgroup of a finite field is called Finite Field Diffie-Hellman. We will describe Elliptic Curve Diffie-Hellman later, but first, we can consider ways to break the current example.
 
 /*With the Diffie-Hellman problem, Alice can establish a shared secret with Bob by having both generate their own secret exponent - either $a$ or $b$. Alice can secretly generate $a$ and send Bob $x^a$, while Bob can secretly generate $b$ and send Alice $x^b$.
 
@@ -286,7 +190,7 @@ L(x) + L(y) - L(x y) &equiv 0&" (mod 1008)"\
 L(x) + L(y) &equiv L(x y)&" (mod 1008)"
 $
 
-As such, we have a relation analogous to the laws of logarithm on real numbers. Since every number can be factorized into primes, the idea is the obtain $L(p)$ for small primes $p$, then figuring out $L(24)$ afterwards. We first try to factorize exponents of the base, $17$, looking for ones that can be factorized into relatively small primes:
+As such, we have a relation analogous to the laws of logarithm on real numbers. Since every number can be factorized into primes, the idea is to obtain $L(p)$ for small primes $p$, then figure out $L(24)$ afterwards. We first try to factorize exponents of $17$ into relatively small primes:
 
 $
 17^15 &equiv 2^2 dot 5 dot 13&" (mod 1009)"\
@@ -326,6 +230,7 @@ Therefore, we indeed arrive at the answer $n = 456$. As seen above, this method 
 
 For the example above, we examined exponents of $17$ up to $17^36$, and also computed $17 dot 24$ and $17^24$. This takes significantly less time than enumerating $17^n$ for all $n$ until we reach 456. Therefore, Index Calculus is much more efficient than brute-forcing.
 
+// TODO no we did not
 We've just descibed the basic algorithm for Index Calculus, there is a more sophisticated method called General Number Field Sieve which builds upon index calculus. GNFS is in general more efficient than simple index calculus for large primes @nguyen_index_2005. The number of operations expected for the GNFS algorithm can be written as @lenstra_l-notation_2005:
 
 $
@@ -336,7 +241,7 @@ where $p$ is the prime that defines the finite field in $FF_p$. For a field with
 
 = Elliptic Curve Cryptography
 
-Let an elliptic curve be denoted by the equation $y^2 = x^3 + A x + B$ where $A$ and $B$ are constants. Note that the curve is symmetric about the $x$-axis, since if $(x,y)$ is a point on the curve, $(x,-y)$ is also on the curve.
+Let an elliptic curve be denoted by the equation $y^2 = x^3 + A x + B$ (named the short Weierstrass form) where $A$ and $B$ are constants. The curve is symmetric about the $x$-axis, since if $(x,y)$ is a point on the curve, $(x,-y)$ is also on the curve.
 
 Let $P_1 = (x_1,y_1)$ and $P_2 = (x_2,y_2)$ be distinct points on the curve, where $x_1 !=x_2$. We can find a new point on the curve by defining a line that goes across the two points, with slope
 
@@ -348,7 +253,7 @@ And line equation $
 y = m(x-x_1) + y_1
 $
 
-We substitute this into the equation of the curve:
+We substitute this into the equation of the curve and try to solve for $x$:
 
 $
 (m(x-x_1) + y_1)^2 = x^3 + A x + B
@@ -419,9 +324,9 @@ $
 
 Additionally, define $P_1 + infinity = infinity + P_1 = P_1$, as well as $infinity + infinity = infinity$.
 
-Perhaps the most surprising result of defining this operation is that the operation is associative, that is, $(P_1 + P_2) + P_3 = P_1 + (P_2 + P_3)$ for any three points $P_1, P_2, P_3$ that belong to the set $C union { infinity }$. Proving this algebraicly becomes very tedious, but there is a geometric argument using cubic space curves and Bézout's theorem for the case where the points are distinct and none of them have the same $x$ value. A proof is outlined below.
-
 == Proof of Associativity
+
+Perhaps the most surprising result of defining this operation is that the operation is associative, that is, $(P_1 + P_2) + P_3 = P_1 + (P_2 + P_3)$ for any three points $P_1, P_2, P_3$ that belong to the set $C union { infinity }$. Proving this algebraicly becomes very tedious, but there is a geometric argument using cubic space curves and Bézout's theorem for the case where the points are distinct and none of them have the same $x$ value. A proof is outlined below.
 
 A cubic space curve is given with the following formula @silverman_rational_2015:
 
@@ -567,5 +472,7 @@ Both of these advantages can be seen from the fact that the Discrete Log Problem
 = Conclusion
 
 Elliptic curves offer a much better alternative to existing cryptographic methods and is representative of the progress mathematicians have made towards helping build a large system (i.e. the Internet) that scales. To answer the question of "To what extent can elliptic curves be used to establish a shared secret over an insecure channel", the answer is "Yes, and it is fast and efficient!"
+
+// todo rewrite this
 
 #bibliography("shortlist.bib")
