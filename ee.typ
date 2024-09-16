@@ -352,9 +352,9 @@ Suppose $C_1$ is specified by the equation $F_1(x, y) = 0$ and $C_2$ by $F_2(x, 
 
 Since we know that the nineth intersection point also satisfies $F_3(x, y) = 0$, we know that $C$ goes through the nineth intersection point. $square$
 
-Now, we use this theorem to prove that the elliptic curve point addition operation is associative for the specific case where points are at distinct $x$ coordinates. Normally, the point at infinity is not shown in diagrams, but since it follows Bézout's theorem and for the graphical proof, the point will be denoted as $O$ in the diagram.
-
 #figure(image("Screenshot_20240626_152533.png"), caption: [By author, graphical proof of associativity])
+
+Now, we use the theorem to prove that the elliptic curve point addition operation is associative for the specific case where points are at distinct $x$ coordinates. Normally, the point at infinity is not shown in diagrams, but since it follows Bézout's theorem and for the graphical proof, the point will be denoted as $O$ in the diagram.
 
 On the elliptic curve, we start with three arbitrary points, $P$, $Q$, and $R$, and our goal is to show that $(P + Q) + R = P + (Q + R)$. The $*$ operation takes two points, draws a line through them, then use the third intersection point on the elliptic curve as a result. Through this, we create $Q * R$ and $P * Q$. To find $Q + R$ and $P + Q$, we take the starred point (for example $Q * R$), draw a line from it to $O$, then take the third intersection point, equivalent to "flipping" the intersection point used in the definition of elliptic curve addition.
 
@@ -476,22 +476,20 @@ The story in elliptic curves is much more complicated. Curve25519 follows the fo
 
 Under Montgomery arithmetic where only the $x$ coordinates of curve points are involved, adding two curve points costs $3M + 2S + 3a + 3s$, where $M, S, a, s$ are costs for multiplying two numbers, squaring a number, adding two numbers, subtracting two numbers in the field the curve is defined on respectively. Assuming that the cost for addition and subtraction is negligible compared to multiplication, and assuming that squaring has approximately equal cost or less as multiplying two numbers, the cost for adding two curve points is approximately $5M$. Note that the field is defined over $2^255 - 19$, so the cost of a multiplication $M$ (for two $255$-bit integers) can be considered as less than the cost of multiplying two $256$-bit integers. So we have $M < bold(C)$.
 
-Note how adding two curve points with curve25519 only costs $5M$, while multiplying in ffdhe2048 costs $64bold(C)$. (approximately 13x difference) As performing the group operation is the primary backbone behind Diffie-Hellman key exchange, this performance difference can have huge implications.
+Adding two curve points with curve25519 only costs $5M$, while multiplying in ffdhe2048 costs $64bold(C)$. (approximately 13x difference) As performing the group operation is the primary backbone behind Diffie-Hellman key exchange, this performance difference can have huge implications.
 
 == Comparison
 
 The specific methods we have chosen to evaluate provide a general insight into the efficiencies of different methods of Diffie-Hellman Key Exchange. 
 
-Elliptic curves only require about 512 bits of storage for a full point, about 256 bits if only storing the $x$-coordinate, while in finite fields, each element requires 2048 bits of storage, taking 8x as much storage than elliptic curves.
+Curve25519 only requires about 512 bits of storage for a full point, about 256 bits if only storing the $x$-coordinate, while in ffdhe2048, each element requires 2048 bits of storage, taking 8x as much storage than curve25519.
 
-Adding two curve points compared to multiplying two finite field elements provide similar benefits in performance as well, with an approximate 13x difference in the number of operations required.
+Adding two curve points in those groups compared to multiplying two finite field elements provide similar benefits in performance as well, with an approximate 13x difference in the number of operations required.
 
-Both of these advantages can be seen from the fact that the Discrete Log Problem is much harder on elliptic curves than in finite fields in general, which we have shown above through comparing the General Number Field Sieve and Pollard's $rho$ algotithm. As a consequence the latter requires much more space and time for their computations in order to provide the same level of security in the trade-off between efficiency and security.
+Both of these advantages can be seen from the fact that the Discrete Log Problem is much harder on elliptic curves than in finite fields in general, which we have shown above through comparing the General Number Field Sieve and Pollard's $rho$ algotithm. As a consequence, larger Finite Fields are required to provide the same level of security, which makes elliptic curves more efficient in comparison.
 
 = Conclusion
 
-Elliptic curves offer a much better alternative to existing cryptographic methods and is representative of the progress mathematicians have made towards helping build a large system (i.e. the Internet) that scales. To answer the question of "To what extent can elliptic curves be used to establish a shared secret over an insecure channel", the answer is "Yes, and it is fast and efficient!"
-
-// todo rewrite this
+Elliptic Curve Cryptography offers a much better alternative to other existing cryptographic methods for establishing secrets through an insecure channel. This is partly because of the difficulty of the Discrete Log Problem for elliptic curves compared to other groups, which allows it to provide the same level of security while being more efficient. Compared to Finite Field Diffie-Hellman, using Elliptic Curves takes us as 8 times less memory, and performs about 13 times faster.
 
 #bibliography("shortlist.bib")
