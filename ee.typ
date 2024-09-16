@@ -105,8 +105,7 @@ Cryptographic techniques are, then, built upon the assumption that the Discrete 
 
 A field is a set that forms a group under addition, forms a group under multiplication with the zero removed, and where multiplication is distributive: $a(b + c) = a b + a c$ @kaliski_field_2011@kaliski_ring_2011.
 
-As it turns out, all fields with the same finite order $q$ can be mapped to each other while preserving their structure (i.e. _finite fields_ with equal order are all _isomorphic_). // TODO is this cruft?
-Therefore any finite field with prime order $p$ is isomorphic to the field of integers modulo $p$. We write it as $FF_p$, and use $FF_p^times$ to explicitly refer to the multiplicative subgroup (equivalent to $ZZ_p^times$ used above) @kaliski_finite_2011.
+As it turns out, all fields with the same finite order $q$ can be mapped to each other while preserving their structure (i.e. _finite fields_ with equal order are all _isomorphic_). Therefore any finite field with prime order $p$ is isomorphic to the field of integers modulo $p$. We write it as $FF_p$, and use $FF_p^times$ to explicitly refer to the multiplicative subgroup (equivalent to $ZZ_p^times$ used above) @kaliski_finite_2011.
 
 == Diffie-Hellman Key Exchange
 
@@ -213,12 +212,19 @@ $
 L(24) = 456 = n
 $
 
-Therefore, we indeed arrive at the answer $n = 456$. As seen above, this method relies on the property that prime factorizations always exist, which does not apply to most ellpitic curves. @washington_elliptic_2008[pp.~154-157]
+Therefore, we indeed arrive at the answer $n = 456$.
+
+Index Calculus follows the following procedure for finding $n$ in $a^n = b$ @washington_elliptic_2008[pp.~144-146]:
+
+- Find prime factorizations of $a^i$ for various $i$, limiting the largest prime in the factor base (in our example, we only factored into primes up to $13$).
+- Solve $L(p)$ for these small primes with the system of equations.
+- Find $L(b)$ through varying $j$ in $a^j b$ until it can be factored with our factor base
+
+This method relies on prime factorizations always existing for integers, which in general does not apply to ellpitic curve points @washington_elliptic_2008[pp.~154-157].
 
 For the example above, we examined exponents of $17$ up to $17^36$, and also computed $17 dot 24$ and $17^24$. This takes significantly less time than enumerating $17^n$ for all $n$ until we reach 456. Therefore, Index Calculus is much more efficient than brute-forcing.
 
-// TODO no we did not
-We've just descibed the basic algorithm for Index Calculus, there is a more sophisticated method called General Number Field Sieve which builds upon index calculus. GNFS is in general more efficient than simple index calculus for large primes @nguyen_index_2005. The number of operations expected for the GNFS algorithm can be written as @lenstra_l-notation_2005:
+An improved method called General Number Field Sieve, based on the idea of reducing discrete logarithm problems to systems of linear equations in Index Calculus, is more efficient than simple index calculus for large primes @nguyen_index_2005. The number of operations expected for the GNFS algorithm can be written as @lenstra_l-notation_2005:
 
 $
 exp((64\/9)^(1\/3)(ln p)^(1\/3)(ln ln p)^(2\/3))
@@ -381,7 +387,7 @@ To figure out this shared secret, Eve could try to break the discrete log for $Q
  
 == Finding the Discrete Log with Pollard's $rho$ algorithm
 
-Pollard's $rho$ algorithm is a general algorithm for solving the discrete log problem for any Abelian (commutative) group. It is less efficient than the general number field sieve on discrete log in finite fields, taking $O(sqrt(N))$ time on average in a group $G$ where $|G| = N$.
+Pollard's $rho$ algorithm is a general algorithm for solving the discrete log problem for any Abelian (commutative) group. It is less efficient than the general number field sieve on discrete log in finite fields, taking $O(sqrt(N))$ time on average in a group $G$ where $|G| = N$ @washington_elliptic_2008[pp.~147-150].
 
 Pollard's $rho$ can be used to solve the problem above: for the curve $y^2 = x^3 + 6692x + 9667$ in $FF_10037$, with $P = (3354, 7358)$, $Q = (5403, 5437)$. Find $k$ such that $k P = Q$.
 
@@ -413,7 +419,7 @@ A_95 &= (170, 7172), A_96 &=& (7004, 514), ...,\
 A_100 &= (170, 7172), A_101 &=& (7004, 514) 
 $
 
-We reach a cycle with $A_95 = A_100$. Since we know the multiples of $P$ and $Q$ for all of the $M_i$ points and thus all $A_n$ points, keeping track of them gives us $A_95 = 3126P + 2682Q$, we also have $A_100 = 3298P + 2817Q$. With $3126P + 2682Q = 3298P + 2817Q$, we have:
+We reach a cycle with $A_95 = A_100$. Since we know the multiples of $P$ and $Q$ for all of the $M_i$ points and thus all $A_n$ points, keeping track of them gives us $A_95 = 3126P + 2682Q$ and $A_100 = 3298P + 2817Q$. With $3126P + 2682Q = 3298P + 2817Q$, and knowing that $|P| = 10151$, we have:
 
 $
 bold(0) = 172P + 135Q = (172 + 135n)P\
@@ -422,6 +428,21 @@ n equiv 1277" (mod 10151)"
 $
 
 With verification, we indeed have $1277P = Q$, and we can then calculate $1277R = (8156, 1546)$ in order to find the shared secret on the example above.
+
+#figure(image("Pollard_rho_cycle.svg"), caption: [Diagram from @_pollard_2021, a visual explanation for the name ($rho$) of the algorithm])
+
+Therefore, Pollard's $rho$ operates with the following steps:
+
+- For finding $k$ where $k P = Q$, first generate a random set of elements consisting of $M_i = x_i P + y_i Q$, then generate the initial point $A_0 = x_a P + y_a Q$
+- With a specific criteria, do a random walk based on some property of $A_n$ to make $A_(n+1)$ (In our case, we used the ones digit)
+- When a cycle is reached, we can tabulate all the coefficients in making the random walk to have a form like $a P + b Q = (a + c)P + (b + d) Q$, then
+
+$
+c P + d Q = bold(0)\
+(c + k d)P = bold(0)
+$
+
+And then $k$ can be solved through $c$ and $d$ based on the order of $P$.
 
 = Evaluation
 
@@ -437,13 +458,13 @@ The smallest finite field used by TLS for Diffie-Hellman is named ffdhe2048 @res
 p = 2^2048 - 2^1984 + (floor(2^1918 dot e) + 560316) dot 2^64 - 1
 $
 
-With the group size being $(p - 1) \/ 2$. If we computed the number of operations needed for the general number field sieve to run, we get approximately $2^117$ operations or equivalently, this provides 117 bits of security. The original definition of ffdhe2048 takes a more conservative estimate, and claims that this provides 103 bits of security @gillmor_negotiated_2016.
+The base element is chosen as $2$, with its order being $(p - 1) \/ 2$. If we computed the number of operations needed for the general number field sieve to run, we get approximately $2^117$ operations or equivalently, this provides 117 bits of security. The original definition of ffdhe2048 takes a more conservative estimate, and claims that this provides 103 bits of security @gillmor_negotiated_2016.
 
 As this field uses a prime 2048 bits of size, each group element requires 2048 bits of storage.
 
 === Elliptic Curve Diffie-Hellman
 
-The elliptic curve with the smallest element size supported by TLS appears to be curve25519, using the prime $p = 2^255 - 19$ as the field $FF_p$ the elliptic curve is over, and the curve $y^2 = x^3 + 486662 x^2 + x$. The order of the group is $2^252 + 27742317777372353535851937790883648493$. As the fastest method to break the discrete logarithm takes $sqrt(pi/4 N)$ operations, this specific curve requires approximately $2^126$ operations to break, or providing 126 bits of security.
+The elliptic curve with the smallest element size supported by TLS appears to be curve25519, using the prime $p = 2^255 - 19$ as the field $FF_p$ the elliptic curve is over, and the curve $y^2 = x^3 + 486662 x^2 + x$. The base point is $x = 9$, and the order of that point is $2^252 + 27742317777372353535851937790883648493$. As per @hankerson_elliptic_2011 the fastest known method to break the discrete logarithm (an improved Pollard's $rho$ algorithm) takes $sqrt(pi/4 N)$ group operations, this specific curve requires approximately $2^126$ operations to break, or providing approximately 126 bits of security.
 
 As elliptic curve points have coordinates under the prime field $2^255 - 19$, each coordinate value requires 255 bits of storage, therefore an entire point (both $x$ and $y$ coordinates) would take about 510 bits of storage.
 
@@ -451,9 +472,11 @@ As elliptic curve points have coordinates under the prime field $2^255 - 19$, ea
 
 Assume that multiplying two $256$-bit integers has cost $bold(C)$. Multiplication of two $2048$-bit integers thus will cost $64bold(C)$ as each $2048$-bit integer has $8$ $256$-bit digits and each digit from the first operand needs to multiply with the next operand. // TODO cite
 
-The story in elliptic curves is much more complicated. Curve25519 follows the form $B y^2 = x^3 + A x^2 + x$ called a Montgomery curve. All curves of that form can be transformed into the short Weierstrass form we used in this essay but not the other way around. Detailed in @costello_montgomery_2018, the Diffie-Hellman Key Exchange protocol could be designed so that only the $x$-coordinate of each point in the process is needed, which simplifies the process by removing the need to compute $y$ coordinates. Under the arithmetic of only the $x$ coordinates of curve points, adding two curve points costs $3M + 2S + 3a + 3s$, where $M, S, a, s$ are costs for multiplying two numbers, squaring a number, adding two numbers, subtracting two numbers in the field the curve is defined on respectively. Assuming that the cost for addition and subtraction is negligible compared to multiplication, and assuming that squaring has approximately equal cost or less as multiplying two numbers, the cost for adding two curve points is approximately $5M$. Note that the field is defined over $2^255 - 19$, so the cost of a multiplication $M$ (for two $255$-bit integers) can be considered as less than the cost of multiplying two $256$-bit integers. So we have $M < bold(C)$.
+The story in elliptic curves is much more complicated. Curve25519 follows the form $B y^2 = x^3 + A x^2 + x$ called a Montgomery curve. All curves of that form can be transformed into the short Weierstrass form we used in this essay but not the other way around. Diffie-Hellman for curves in that form could be designed so that only the $x$-coordinate of each point in the process is needed, which simplifies the process by removing the need to compute $y$ coordinates @costello_montgomery_2018.
 
-Note how adding two curve points only costs $5M$, while multiplying in finite fields costs $64bold(C)$. (approximately 13x difference) As performing the group operation is the primary backbone behind Diffie-Hellman key exchange, this performance difference can have huge implications.
+Under Montgomery arithmetic where only the $x$ coordinates of curve points are involved, adding two curve points costs $3M + 2S + 3a + 3s$, where $M, S, a, s$ are costs for multiplying two numbers, squaring a number, adding two numbers, subtracting two numbers in the field the curve is defined on respectively. Assuming that the cost for addition and subtraction is negligible compared to multiplication, and assuming that squaring has approximately equal cost or less as multiplying two numbers, the cost for adding two curve points is approximately $5M$. Note that the field is defined over $2^255 - 19$, so the cost of a multiplication $M$ (for two $255$-bit integers) can be considered as less than the cost of multiplying two $256$-bit integers. So we have $M < bold(C)$.
+
+Note how adding two curve points with curve25519 only costs $5M$, while multiplying in ffdhe2048 costs $64bold(C)$. (approximately 13x difference) As performing the group operation is the primary backbone behind Diffie-Hellman key exchange, this performance difference can have huge implications.
 
 == Comparison
 
