@@ -5,6 +5,8 @@
   justify: true,
   leading: 0.75em
 )
+#show heading: set block(below: 0.75em)
+#set page(numbering: "1", number-align: right)
 #set text(font: "IBM Plex Sans")
 
 
@@ -31,8 +33,6 @@ Word count: #total-words
 #outline(indent: 2em)
 
 #pagebreak()
-
-// todo add page numbers
 
 = Introduction
 
@@ -297,9 +297,7 @@ And $
 y_3 = -(m(x_3 - x_1) + y_1) = m(x_1 - x_3) - y_1
 $
 
-Therefore, we can begin to define a group law for points on elliptic curves. For special cases, such as adding two points on a vertical line, a "point at infinity" is added to the normal set of points on the curve, so that the group is well-defined for operations on all points. This is studied more rigorously in projective geometry, though we simply introduce the superficial concept for a simple definition of the group law on elliptic curves.
-
-// TODO cite
+Therefore, we can begin to define a group law for points on elliptic curves. For special cases, such as adding two points on a vertical line, a "point at infinity" is added to the normal set of points on the curve, so that the group is well-defined for operations on all points. This is studied more rigorously in projective geometry, though we simply introduce the superficial concept for a simple definition of the group law on elliptic curves @washington_elliptic_2008[p.~11].
 
 For an elliptic curve $C: y^2 = x^3 + A x + B$ we define the following set:
 
@@ -470,7 +468,7 @@ As elliptic curve points have coordinates under the prime field $2^255 - 19$, ea
 
 == Performance of group operations
 
-Assume that multiplying two $256$-bit integers has cost $bold(C)$. Multiplication of two $2048$-bit integers thus will cost $64bold(C)$ as each $2048$-bit integer has $8$ $256$-bit digits and each digit from the first operand needs to multiply with the next operand. // TODO cite
+Assume that multiplying two $256$-bit integers has cost $bold(C)$. Multiplication of two $2048$-bit integers thus will cost $64bold(C)$ as each $2048$-bit integer has $8$ $256$-bit digits and each of the eight digits from the first number needs to multiply with the eight from the second number @pudlak_complexity_2013[p.~398].
 
 The story in elliptic curves is much more complicated. Curve25519 follows the form $B y^2 = x^3 + A x^2 + x$ called a Montgomery curve. All curves of that form can be transformed into the short Weierstrass form we used in this essay but not the other way around. Diffie-Hellman for curves in that form could be designed so that only the $x$-coordinate of each point in the process is needed, which simplifies the process by removing the need to compute $y$ coordinates @costello_montgomery_2018.
 
