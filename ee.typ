@@ -26,7 +26,7 @@ Mathematics
 
 #show: word-count.with(exclude: (heading, figure.caption))
 
-Word count: #total-words
+Word count: #total-words (Unofficial count!)
 
 #pagebreak()
 
@@ -50,13 +50,13 @@ they can both encrypt their messages with the same password. Because using a pas
 faster, Alice can first use Bob's public key to send a password, then together opt to
 use password based encryption instead @sako_public_2005.
 
-Suppose Eve kept a record of all encrypted messages sent between Alice and Bob, and Eve obtains Alice's private key in some way in the future. Eve will be able to decrypt all the passwords, and therefore all the messages. On cryptographic terms, we say that this method does not have _forward secrecy_ @krawczyk_perfect_2005.
+Suppose Eve kept a record of all encrypted messages sent between Alice and Bob, and Eve obtains Alice's private key in some way in the future. Eve will be able to decrypt all the passwords, and therefore all the messages. On cryptographic terms, we say that using public key cryptography to send passwords does not have _forward secrecy_ @krawczyk_perfect_2005.
 
-With Diffie-Hellman Key Exchange, Alice and Bob can quickly establish a password without using any public and private keys, and Eve would still be unable to obtain the password just from inspecting the communication. This is great for Alice, as she can generate a password each time she talks to Bob. If Eve ever finds out the password for one of their messages, she would not be able to decrypt the other messages @krawczyk_perfect_2005@just_diffiehellman_2005.
+With Diffie-Hellman Key Exchange, Alice and Bob can quickly establish a password without using any public and private keys, and Eve would still be unable to obtain the password just from inspecting the communication. Alice and Bob can then generate a password each time they talk. If Eve ever finds out the password for one of their messages, she would not be able to decrypt the other messages @krawczyk_perfect_2005@just_diffiehellman_2005.
 
 Diffie-Hellman Key Exchange is designed specifically so that people can establish a shared secret (the password between Alice and Bob) over an insecure channel (a communication method that Eve can eavesdrop).
 
-Diffie-Hellman takes on different forms. There is Finite Field Diffie-Hellman and Elliptic Curve Diffie-Hellman. To answer our research question, we'll look at both techniques and compare the two methods in terms of how efficient they are (how much data does Alice and Bob need to send to each other?) and how fast they are (how quickly can Alice and Bob calculate the shared password in an exchange?)
+Diffie-Hellman takes on different forms. There is Finite Field Diffie-Hellman and Elliptic Curve Diffie-Hellman. To answer our research question, we'll compare the two methods in terms of how efficient they are (how much data does Alice and Bob need to send to each other?) and how fast they are (how quickly can Alice and Bob calculate the shared password in an exchange?) to show the effectiveness of elliptic curves.
 
 = Group Theory
 
@@ -74,11 +74,11 @@ $
 a dot a^(p-2) equiv 1 " " (mod p)
 $
 
-Thus, under multiplication modulo $p$, any non-zero integer $a$ multiplied by $a^(p-2)$ results in 1. As 1 is the multiplicative identity ($1 dot x = x$), $a^(p-2)$ is said to be $a$'s _multiplicative inverse_. Consider the set of numbers from $1$ to $p - 1$. Every number $a$ has a multiplicative inverse ($a^(p-2)$) modulo $p$; The set contains an identity element ($1$); Multiplication is associative ($a dot (b dot c) = (a dot b) dot c$); And each multiplication will always result in a number between $1$ to $p - 1$ since it is performed modulo $p$ (closure). These properties, existence of an identity element and inverses, associativity, and the closure of operations, are exactly the properties that define a group.
+Thus, under multiplication modulo $p$, any non-zero integer $a$ multiplied by $a^(p-2)$ results in $1$. As $1$ is the multiplicative identity ($1 dot x = x$), $a^(p-2)$ is said to be $a$'s _multiplicative inverse_. Consider the set of numbers from $1$ to $p - 1$. Every number $a$ has a multiplicative inverse ($a^(p-2)$) modulo $p$; The set contains an identity element ($1$); Multiplication is associative ($a dot (b dot c) = (a dot b) dot c$); And each multiplication will always result in a number between $1$ to $p - 1$ since it is performed modulo $p$ (closure). These properties, existence of an identity element and inverses, associativity, and the closure of operations, are exactly the properties that define a group @shemanske_modern_2017[pp.~73-76].
 
-A group is, at its core, a set. We'll use some of the same language with sets, for example the $in$ symbol and the word _element_. We will refer to the specific group we discussed above as $ZZ_p^times$. The subscript is the _modulus_ of operations, while the superscript specifies the operation. In a similar vein, $ZZ_p^+$ refers to the same set of numbers (though also including the number $0$, unlike multiplication), but specifies addition as its group operation.
+A group is, at its core, a set. Therefore, the $in$ symbol and the word _element_ applies to groups as well. We will refer to the specific group we discussed above as $ZZ_p^times$. In a similar vein, $ZZ_p^+$ specifies addition modulo $p$ as its group operation.
 
-The _order_ of a group refers to the number of elements in that group. For $ZZ_p^times$, the order is $p - 1$ since the elements are $1, 2, ..., p - 1$. Using notation, we write $|ZZ_p^times| = p - 1$. As per above, the additive group includes zero, therefore $|ZZ_p^+| = p$.
+The _order_ of a group refers to the number of elements in that group. For $ZZ_p^times$, the order is $p - 1$ since the elements are $1, 2, ..., p - 1$. Using notation, we write $|ZZ_p^times| = p - 1$. The additive group includes zero as the identity, therefore $|ZZ_p^+| = p$.
 
 The _order_ of a specific element $x$, refers to the smallest integer $k$ such that $x^k = 1$, where $1$ is the identity element. For example, the order of $17$ in $ZZ_1009^times$ is $1008$, because $a = 1008$ is the smallest $a$ such that $17^a=1$, whereas the order of $2$ in the same group is $504$, since $b = 504$ is the smallest $b$ such that $2^b = 1$ . Therefore, we have $|17| = 1008$ and $|2| = 504$.
 
@@ -90,14 +90,13 @@ $
 17^(456) equiv 24 " " (mod 1009)
 $
 
-Therefore $n = 456$ is the solution to this question. More generally, the discrete log problem (DLP) asks for a smallest exponent $n$ for a given group $g$ and its elements $a$ and $b$ such that
+Therefore $n = 456$ is the solution to this question. More generally, the discrete log problem (DLP) asks for a smallest exponent $n$ in a group $g$ and $a, b in g$ such that
 
 $
 a^n = b
 $
 
-The brute-force approach to this problem would be repeatedly performing the group multiplication, calculating $a^2$, $a^3$, $a^4$ and checking if any of them matches $b$. In the example problem, it would take $455$ multiplications before finally arriving at the answer. If we tried to solve questions of this kind repeatedly with the exponent $n$ taken at random, brute-forcing would take on average $1/2|a|$ operations. As the order $|a|$ gets big (towards numbers as big as $2^200$), this approach quickly becomes infeasible.
-
+The brute-force approach to this problem would be repeatedly performing the group multiplication, calculating $a^2$, $a^3$, $a^4$ and checking if any of them matches $b$. In the example problem, it would take $455$ multiplications before finally arriving at the answer. If we tried to solve questions of this kind repeatedly with the exponent $n$ taken at random, brute-forcing would take on average $1/2|a|$ operations since answers are in the range of $0$ to $|a| - 1$. As the order $|a|$ gets big (towards numbers as big as $2^200$), this approach quickly becomes infeasible.
 
 Cryptographic techniques are, then, built upon the assumption that the Discrete Log Problem is non-trivial to solve.
 
@@ -139,7 +138,7 @@ Consider the following case where anything sent between Alice and Bob can be see
 
 To generalize, the Diffie-Hellman Key Exchange utilizes the difficulty of the Diffie-Hellman problem. Under an agreed upon group $G$ and base $x in G$, two parties Alice and Bob can establish a shared secret. Alice can generate an exponent $a$ and send Bob $x^a$, while Bob can generate a secret exponent $b$ and send Alice $x^b$. Together, they can both compute $x^(a b)$ as their shared secret securely, even if Eve is able to intercept this communication.
 
-The specific example was done in $FF_1009^times$. In reality, the size of the field will be much larger to prevent anyone from trivially breaking the exchange and finding the secret @friedl_diffie-hellman_2006@velvindron_increase_2017. The more general technique of performing Diffie-Hellman on the multiplicative subgroup of a finite field is called Finite Field Diffie-Hellman. We will describe Elliptic Curve Diffie-Hellman later, but first, we can consider ways to break the current example.
+The specific example was done in $FF_1009^times$. In reality, the size of the field will be much larger to prevent anyone from trivially breaking the exchange and finding the secret @friedl_diffie-hellman_2006@velvindron_increase_2017. The more general technique of performing Diffie-Hellman on the multiplicative subgroup of a finite field is called Finite Field Diffie-Hellman. We first consider one way to break this, and afterwards show that elliptic curves would take more effort to break.
 
 == Index Calculus
 
@@ -205,14 +204,15 @@ L(2) = 646, L(3) = 534, L(5) = 886,\
 L(7) = 380, L(11) = 697, L(13) = 861
 $
 
-Next up, the idea is to find $17^x dot 24$ and find one that can factorize over primes not greater than 13. Indeed, we have $17^2 dot 24 equiv 2 dot 3^2 dot 7^2" (mod 1009)"$, so then we have
+Next up, the idea is to find $17^x dot 24$ and find one that can factorize over primes not greater than 13. (Note that $x = 0$ works here since $24$ can be easily factorized, but in most cases it won't, so we show the more frequent case) Indeed, we have $17^2 dot 24 equiv 2 dot 3^2 dot 7^2" (mod 1009)"$, so then we have
 
 $
-2 + L(24) equiv L(2) + 2L(2) + 2L(7)" (mod 1008)"\
-L(24) = 456 = n
+L(17^2 dot 24) equiv L(2 dot 3^2 dot 7^2)" (mod 1008)"\
+2 + L(24) equiv L(2) + 2L(3) + 2L(7)" (mod 1008)"\
+L(24) = 456
 $
 
-Therefore, we indeed arrive at the answer $n = 456$.
+We arrive at the answer $n = 456$.
 
 Index Calculus follows the following procedure for finding $n$ in $a^n = b$ @washington_elliptic_2008[pp.~144-146]:
 
@@ -222,7 +222,7 @@ Index Calculus follows the following procedure for finding $n$ in $a^n = b$ @was
 
 This method relies on prime factorizations always existing for integers, which in general does not apply to ellpitic curve points @washington_elliptic_2008[pp.~154-157].
 
-For the example above, we examined exponents of $17$ up to $17^36$, and also computed $17 dot 24$ and $17^24$. This takes significantly less time than enumerating $17^n$ for all $n$ until we reach 456. Therefore, Index Calculus is much more efficient than brute-forcing.
+For the example above, we examined exponents of $17$ up to $17^36$, and also computed $17 dot 24$ and $17^2 dot 24$. This took significantly less time than enumerating $17^n$ for all $n$ until we reach 456. Therefore, Index Calculus is much more efficient than brute-forcing.
 
 An improved method called General Number Field Sieve, based on the idea of reducing discrete logarithm problems to systems of linear equations in Index Calculus, is more efficient than simple index calculus for large primes @nguyen_index_2005. The number of operations expected for the GNFS algorithm can be written as @lenstra_l-notation_2005:
 
@@ -297,7 +297,7 @@ And $
 y_3 = -(m(x_3 - x_1) + y_1) = m(x_1 - x_3) - y_1
 $
 
-Therefore, we can begin to define a group law for points on elliptic curves. For special cases, such as adding two points on a vertical line, a "point at infinity" is added to the normal set of points on the curve, so that the group is well-defined for operations on all points. This is studied more rigorously in projective geometry, though we simply introduce the superficial concept for a simple definition of the group law on elliptic curves @washington_elliptic_2008[p.~11].
+Therefore, we can begin to define a group law for points on elliptic curves. For special cases, such as adding two points on a vertical line, a "point at infinity" is added to the normal set of points on the curve, so that the group is well-defined for operations on all points. This is studied more rigorously in projective geometry, though we incorporate this concept for simply defining the group law on elliptic curves @washington_elliptic_2008[p.~11].
 
 For an elliptic curve $C: y^2 = x^3 + A x + B$ we define the following set:
 
@@ -306,6 +306,9 @@ E(C) = {bold(0)} union {(x, y) | y^2 = x^3 + A x + B}
 $
 
 Where $bold(0)$ is the "point at infinity". We now show that $E(C)$ forms a group.
+
+
+#figure(image("ECClines-2.svg"), caption: [Diagram from @supermanu_ecclines-2_2007, an illustration of the group operation defined on elliptic curves])
 
 Let $P_1 = (x_1, y_1)$ and $P_2 = (x_2, y_2)$ be two points that are on the curve. Define $P_3 = P_1 + P_2$ to be as follows:
 
@@ -322,11 +325,9 @@ $
 
 Additionally, define $P_1 + bold(0) = bold(0) + P_1 = P_1$, as well as $bold(0) + bold(0) = bold(0)$.
 
-#figure(image("ECClines-2.svg"), caption: [Diagram from @supermanu_ecclines-2_2007, an illustration of the group operation defined on elliptic curves])
-
 == Proof of Associativity
 
-Perhaps the most surprising result of defining this operation is that the operation is associative, that is, $(P_1 + P_2) + P_3 = P_1 + (P_2 + P_3)$ for any three points $P_1, P_2, P_3 in E(C)$. Proving this algebraicly becomes very tedious, but there is a geometric argument using cubic space curves and Bézout's theorem for a specific case where the points have distinct $x$ coordinates. A proof from @silverman_rational_2015[pp.~8-15] is outlined below.
+Perhaps the most surprising result of defining this operation is that the operation is associative, that is, $(P_1 + P_2) + P_3 = P_1 + (P_2 + P_3)$ for any three points $P_1, P_2, P_3 in E(C)$. Proving this algebraicly becomes tedious, but there is a geometric argument using cubic space curves and Bézout's theorem for a specific case where the points have distinct $x$ coordinates. A proof from @silverman_rational_2015[pp.~8-15] is outlined below.
 
 A cubic space curve is given with the following formula:
 
@@ -350,17 +351,17 @@ Suppose $C_1$ is specified by the equation $F_1(x, y) = 0$ and $C_2$ by $F_2(x, 
 
 Since we know that the nineth intersection point also satisfies $F_3(x, y) = 0$, we know that $C$ goes through the nineth intersection point. $square$
 
-#figure(image("Screenshot_20240626_152533.png"), caption: [By author, graphical proof of associativity])
+#figure(image("Screenshot_20240626_152533.png"), caption: [By author, graphical proof of associativity]) <graphical_proof>
 
 Now, we use the theorem to prove that the elliptic curve point addition operation is associative for the specific case where points are at distinct $x$ coordinates. Normally, the point at infinity is not shown in diagrams, but since it follows Bézout's theorem and for the graphical proof, the point will be denoted as $O$ in the diagram.
 
-On the elliptic curve, we start with three arbitrary points, $P$, $Q$, and $R$, and our goal is to show that $(P + Q) + R = P + (Q + R)$. The $*$ operation takes two points, draws a line through them, then use the third intersection point on the elliptic curve as a result. Through this, we create $Q * R$ and $P * Q$. To find $Q + R$ and $P + Q$, we take the starred point (for example $Q * R$), draw a line from it to $O$, then take the third intersection point, equivalent to "flipping" the intersection point used in the definition of elliptic curve addition.
+As shown in @graphical_proof, we start with three arbitrary points on the elliptic curve, $P$, $Q$, and $R$, and our goal is to show that $(P + Q) + R = P + (Q + R)$. The $*$ operation takes two points, draws a line through them, then use the third intersection point on the elliptic curve as a result. Through this, we create $Q * R$ and $P * Q$. To find $Q + R$ and $P + Q$, we take the starred point (for example $Q * R$), draw a line from it to $O$, then take the third intersection point, equivalent to "flipping" the intersection point used in the definition of elliptic curve addition.
 
 We then create $(P + Q) * R$ and $P * (Q + R)$, and draw six lines. The three blue lines go through $(P+Q)*R$, $P$, $Q$, $R$, $Q*R$, $Q+R$, $P*R$, $P+Q$, and $O$. The three black lines $P * (Q + R)$, $P$, $Q$, $R$, $Q*R$, $Q+R$, $P*R$, $P+Q$, and $O$.
 
-Let $C_1$ be the elliptic curve, and let $C_2$ be the cubic space curve formed through the three black lines. As $C$, the cubic space curve formed through the three blue lines, go through eight of the nine points that are intersections between $C_1$ and $C_2$: $P$, $Q$, $R$, $Q*R$, $Q+R$, $P*R$, $P+Q$, and $O$, it must also go through $P * (Q + R)$, the last intersection point. However, we also know that point as $(P + Q) * R$, therefore those points must be equal. $P * (Q + R) = (P + Q) * R$ implies $P + (Q + R) = (P + Q) + R$, proving the associativity in this case.
+Let $C_1$ be the elliptic curve, and let $C_2$ be the cubic space curve formed through the three black lines, $C$ is the curve formed through three blue lines. As $C$ goes through eight of the nine points that are intersections between $C_1$ and $C_2$: $P$, $Q$, $R$, $Q*R$, $Q+R$, $P*R$, $P+Q$, and $O$, it must also go through $P * (Q + R)$, the last intersection point between the black lines and the curve. However, we also know that point as $(P + Q) * R$ from the blue lines' intersection, therefore they must be the same point. $P * (Q + R) = (P + Q) * R$ implies $P + (Q + R) = (P + Q) + R$, proving the associativity in this case.
 
-This is deliberately an incomplete proof for ease of presentation, since we did not cover corner cases such as when two of the three points have the same $x$-coordinate, a more complete proof can be seen in @washington_elliptic_2008[pp.~20-32], we will assume associative is true in the general sense here.
+This is deliberately an incomplete proof, since we did not cover corner cases such as when two of the three points have the same $x$-coordinate, a more complete proof can be seen in @washington_elliptic_2008[pp.~20-32], we will assume associativity is true in the general sense here.
 
 == Group of elliptic curve points
 
@@ -368,16 +369,16 @@ Therefore, $E(C)$ forms a group:
 
 1. The operation $P_a + P_b$ is well-defined for any points $P_a, P_b in E(C)$.
 2. $bold(0)$ is the identity, where $P_a + bold(0) = P_a$ for all $P_a in E(C)$.
-3. Existence of inverse: let $P_a = (x, y)$, its inverse is $-P_a = (x, -y)$. $-P_a in E(C)$ since the curve is symmetric about the $x$ axis.
+3. Existence of inverse: let $P_a = (x, y)$, its inverse is $-P_a = (x, -y)$ since $(x, y) + (x, -y) = bold(0)$.
 4. The operation is associative.
 
 Since elliptic curve points form a group, cryptographic techniques such as Diffie-Hellman Key Exchange which relies on group operations can also be applied to elliptic curves.
 
 == Elliptic Curve Diffie-Hellman
 
-One important difference between elliptic curve operations and modular multiplicative group operations is in notation. In elliptic curves, the operation is commonly represented as addition of two points. Therefore $A + B$ is the normal operation on two points $A$ and $B$ while $k A$ is the operation repeated (e.g. $2A = A + A$). In the multiplicative group modulo $p$, it corresponds to $A B$ and $A^k$. Thus, an operation in previous sections such as $A^k$ will now be written as $k A$ in the context of elliptic curves.
+Elliptic curve operations and modular multiplicative group operations differ in notation. In elliptic curves, the operation is commonly represented as addition of two points. Therefore $A + B$ is the normal operation on two points $A$ and $B$ while $k A$ is the operation repeated (e.g. $2A = A + A$). In the multiplicative group modulo $p$, it corresponds to $A B$ and $A^k$. Thus, an operation in previous sections such as $A^k$ will now be written as $k A$ in the context of elliptic curves.
 
-With that note, Diffie-Hellman in elliptic curves follows the exact same procedure: two parties agree on a curve group to use, then decide on a base point $G$. Alice generates a secret integer $a$ and sends Bob $a G$. Bob generates a secret integer $b$ and sends Alice $b G$. They can now both calculate $a b G$, which cannot be known by third parties unless they can solve the discrete log problem in elliptic curves.
+With that note, Diffie-Hellman in elliptic curves follows the exact same procedure: two parties agree on a curve group to use, then decide on a base point $P$. Alice generates a secret integer $a$ and sends Bob $a P$. Bob generates a secret integer $b$ and sends Alice $b P$. They can now both calculate $a b P$, which cannot be known by third parties unless they can solve the discrete log problem in elliptic curves.
 
 A short example is as follows: Alice and Bob agrees to use the curve $y^2 = x^3 + 6692x + 9667$ in $FF_10037$, with the base point $P = (3354, 7358)$ (from @silverman_rational_2015[p.~164]). Alice generates $a = 1277$ and sends $Q = a P = (5403, 5437)$ to Bob. Bob generates $b = 1337$ and sends $R = b P = (7751, 1049)$ to Alice.\ Alice calculates $a R = a b P = (8156, 1546)$, and bob calculates $b Q = b a P = (8156, 1546)$ as their shared secret.
 
@@ -440,15 +441,15 @@ c P + d Q = bold(0)\
 (c + k d)P = bold(0)
 $
 
-And then $k$ can be solved through $c$ and $d$ based on the order of $P$.
+And then $k$ can be solved through $c$ and $d$ based on $|P|$.
 
 = Evaluation
 
-Pollard's $rho$ algorithm on elliptic curve groups works on average with $sqrt(pi/4 N)$ elliptic curve additions with $N$ being the order for the base point $P$ @bernstein_correct_2011. On the other hand, the general number field sieve takes about $exp((64\/9)^(1\/3)(ln p)^(1\/3)(ln ln p)^(2\/3))$ operations in a prime field with order $p$. Assigning real numbers to these expressions, we can evaluate the current industry standards for cryptography.
+Pollard's $rho$ algorithm on elliptic curve groups works on average with $sqrt(pi/4 N)$ elliptic curve additions with $N = |P|$ @bernstein_correct_2011. On the other hand, the general number field sieve takes about $exp((64\/9)^(1\/3)(ln p)^(1\/3)(ln ln p)^(2\/3))$ operations in a prime field with order $p$. Assigning real numbers to these expressions, we can evaluate the current industry standards for cryptography.
 
 == Diffie-Hellman in TLS 1.3
 
-The Transport Layer Security (TLS) protocol is the protocol used in virtually all internet connections that are protected through cryptography @heinrich_transport_2011, with the latest version being TLS 1.3. One important part of this protocol is Diffie-Hellman Key Exchange. We shall now examine the Diffie-Hellman methods it supports.
+The Transport Layer Security (TLS) protocol is the protocol used in virtually all internet connections secured through cryptography @heinrich_transport_2011, with the latest version being TLS 1.3. One important part of this protocol is Diffie-Hellman Key Exchange. We shall now examine the Diffie-Hellman methods it supports.
 
 === Finite Field Diffie-Hellman
 
@@ -456,7 +457,7 @@ The smallest finite field used by TLS for Diffie-Hellman is named ffdhe2048 @res
 p = 2^2048 - 2^1984 + (floor(2^1918 dot e) + 560316) dot 2^64 - 1
 $
 
-The base element is chosen as $2$, with its order being $(p - 1) \/ 2$. If we computed the number of operations needed for the general number field sieve to run, we get approximately $2^117$ operations or equivalently, this provides 117 bits of security. The original definition of ffdhe2048 takes a more conservative estimate, and claims that this provides 103 bits of security @gillmor_negotiated_2016.
+The base element is chosen as $2$, with $|2| = (p - 1) \/ 2$. If we computed the number of operations needed for the general number field sieve to run, we get approximately $2^117$ operations or equivalently, this provides 117 bits of security. The original definition of ffdhe2048 takes a more conservative estimate, and claims that it provides 103 bits of security @gillmor_negotiated_2016.
 
 As this field uses a prime 2048 bits of size, each group element requires 2048 bits of storage.
 
@@ -474,7 +475,7 @@ The story in elliptic curves is much more complicated. Curve25519 follows the fo
 
 Under Montgomery arithmetic where only the $x$ coordinates of curve points are involved, adding two curve points costs $3M + 2S + 3a + 3s$, where $M, S, a, s$ are costs for multiplying two numbers, squaring a number, adding two numbers, subtracting two numbers in the field the curve is defined on respectively. Assuming that the cost for addition and subtraction is negligible compared to multiplication, and assuming that squaring has approximately equal cost or less as multiplying two numbers, the cost for adding two curve points is approximately $5M$. Note that the field is defined over $2^255 - 19$, so the cost of a multiplication $M$ (for two $255$-bit integers) can be considered as less than the cost of multiplying two $256$-bit integers. So we have $M < bold(C)$.
 
-Adding two curve points with curve25519 only costs $5M$, while multiplying in ffdhe2048 costs $64bold(C)$. (approximately 13x difference) As performing the group operation is the primary backbone behind Diffie-Hellman key exchange, this performance difference can have huge implications.
+Adding two curve points with curve25519 only costs $5M$, while multiplying in ffdhe2048 costs $64bold(C)$. (approximately 13x difference) As performing the group operation is the primary backbone behind Diffie-Hellman Key Exchange, this performance difference can have huge implications.
 
 == Comparison
 
