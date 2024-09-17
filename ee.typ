@@ -36,9 +36,9 @@ Word count: #total-words
 
 = Introduction
 
-As Alice tries to talk to Bob through her laptop, an adversary named Eve tries to eavesdrop their communication and steal sensitive information. Alice and Bob decide to use Diffie-Hellman Key Exchange, which allows them to establish a password for future communication, even if Eve can intercept all of their communication.
+As Alice tries to talk to Bob through her laptop, an adversary named Eve tries to eavesdrop their communication and steal sensitive information. Alice and Bob decide to use Diffie-Hellman Key Exchange, which allows them to establish a password for future communication, even if Eve can intercept all of the information transmitted.
 
-Diffie-Hellman is an important element within the collection of cryptographic methods that together bullet-proof Internet connections. 99.3% of the top 1 million websites prefer using Diffie-Hellman over others when it comes to establishing a shared secret @warburton_2021_2021.
+Diffie-Hellman is an important element in the collection of cryptographic methods that together bullet-proof Internet connections. 99.3% of the top 1 million websites prefer using Diffie-Hellman over others when it comes to establishing a shared secret @warburton_2021_2021.
 
 To understand the effectiveness of Diffie-Hellman, we can compare it to a different scheme named _public key cryptography_ which can also help Alice secure her messages with Bob.
 
@@ -48,11 +48,11 @@ There are some disadvantages to this method. One is that encryption using public
 often slower than _symmetric cryptography_, where if Alice and Bob share a password,
 they can both encrypt their messages with the same password. Because using a password is
 faster, Alice can first use Bob's public key to send a password, then together opt to
-use password based encryption instead.@sako_public_2005
+use password based encryption instead @sako_public_2005.
 
-Suppose Eve kept a record of all encrypted messages sent between Alice and Bob, and Eve obtains Alice's private key in some way in the future. Eve will be able to decrypt all the passwords, and therefore all the messages. On cryptographic terms, we say that this method does not have _forward secrecy_.@krawczyk_perfect_2005
+Suppose Eve kept a record of all encrypted messages sent between Alice and Bob, and Eve obtains Alice's private key in some way in the future. Eve will be able to decrypt all the passwords, and therefore all the messages. On cryptographic terms, we say that this method does not have _forward secrecy_ @krawczyk_perfect_2005.
 
-With Diffie-Hellman Key Exchange, Alice and Bob can quickly establish a password without using any public and private keys, and Eve would still be unable to obtain the password just from inspecting the communication. This is great for Alice, as she can generate a password each time she talks to Bob. If Eve ever finds out the password for one of their messages, she would not be able to decrypt the other messages.@krawczyk_perfect_2005@just_diffiehellman_2005
+With Diffie-Hellman Key Exchange, Alice and Bob can quickly establish a password without using any public and private keys, and Eve would still be unable to obtain the password just from inspecting the communication. This is great for Alice, as she can generate a password each time she talks to Bob. If Eve ever finds out the password for one of their messages, she would not be able to decrypt the other messages @krawczyk_perfect_2005@just_diffiehellman_2005.
 
 Diffie-Hellman Key Exchange is designed specifically so that people can establish a shared secret (the password between Alice and Bob) over an insecure channel (a communication method that Eve can eavesdrop).
 
