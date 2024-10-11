@@ -40,21 +40,15 @@ As Alice tries to talk to Bob through her laptop, an adversary named Eve tries t
 
 Diffie-Hellman is an important element in the collection of cryptographic methods that together bullet-proof Internet connections. 99.3% of the top 1 million websites prefer using Diffie-Hellman over others when it comes to establishing a shared secret @warburton_2021_2021.
 
-To understand the effectiveness of Diffie-Hellman, we can compare it to a different scheme named _public key cryptography_ which can also help Alice secure her messages with Bob.
+Much of cryptography is developed on the need to communicate messages securely in that other people cannot know what messages are being sent. Password-based, or _symmetric_ cryptography uses a secret key known between two parties to communicate messages safely @sako_public_2005. 
 
-With public key cryptography, Alice can use Bob's public key to encrypt a message that only Bob can decrypt using his private key. Bob can then use Alice's public key to send a message that only Alice can decrypt with her own private key, which facilitates secure communication @sako_public_2005.
+#figure(image("Safe.svg", width: 70%), caption: [Diagram by author, derived from @pdclipartorg_safe_2009.])
 
-There are some disadvantages to this method. One is that encryption using public keys is
-often slower than _symmetric cryptography_, where if Alice and Bob share a password,
-they can both encrypt their messages with the same password. Because using a password is
-faster, Alice can first use Bob's public key to send a password, then together opt to
-use password based encryption instead @sako_public_2005.
+Under an analogy using safes, if Alice and Bob both know a secret combination, they can send each other secret messages within safes configured with that combination which protects their messages from being inspected by anyone else. Symmetric cryptography is then concerned with the mathematical processes that can be used to construct such a safe.
 
-Suppose Eve kept a record of all encrypted messages sent between Alice and Bob, and Eve obtains Alice's private key in some way in the future. Eve will be able to decrypt all the passwords, and therefore all the messages. On cryptographic terms, we say that using public key cryptography to send passwords does not have _forward secrecy_ @krawczyk_perfect_2005.
+Diffie-Hellman arises from a need for Alice and Bob to quickly agree on a combination to use even if their own form of communication is one that can be eavesdropped by third parties like Eve @just_diffiehellman_2005. This is at the core of applications such as securing Internet connections, since visitors of a website should not be forced to physically visit a company in order to establish some secret key for communication, but communication through the Internet without encryption provided by cryptography would be insecure.
 
-With Diffie-Hellman Key Exchange, Alice and Bob can quickly establish a password without using any public and private keys, and Eve would still be unable to obtain the password just from inspecting the communication. Alice and Bob can then generate a password each time they talk. If Eve ever finds out the password for one of their messages, she would not be able to decrypt the other messages @krawczyk_perfect_2005@just_diffiehellman_2005.
-
-Diffie-Hellman Key Exchange is designed specifically so that people can establish a shared secret (the password between Alice and Bob) over an insecure channel (a communication method that Eve can eavesdrop).
+Diffie-Hellman Key Exchange is designed specifically so that people can establish a shared secret (the combination between Alice and Bob) over an insecure channel (a communication method that Eve can eavesdrop).
 
 Diffie-Hellman takes on different forms. There is Finite Field Diffie-Hellman and Elliptic Curve Diffie-Hellman. To answer our research question, we'll compare the two methods in terms of how efficient they are (how much data does Alice and Bob need to send to each other?) and how fast they are (how quickly can Alice and Bob calculate the shared password in an exchange?) to show the effectiveness of elliptic curves.
 
@@ -62,7 +56,7 @@ Diffie-Hellman takes on different forms. There is Finite Field Diffie-Hellman an
 
 == $ZZ_p^times$: The Multiplicative Group Over a Prime
 
-Fermat's Little Theorem suggests the following to be true for any integer $a$ and prime $p$:
+Fermat's Little Theorem suggests the following to be true for any non-zero integer $a$ and prime $p$:
 
 $
 a^(p-1) equiv 1 " " (mod p)
@@ -74,23 +68,23 @@ $
 a dot a^(p-2) equiv 1 " " (mod p)
 $
 
-Thus, under multiplication modulo $p$, any non-zero integer $a$ multiplied by $a^(p-2)$ results in $1$. As $1$ is the multiplicative identity ($1 dot x = x$), $a^(p-2)$ is said to be $a$'s _multiplicative inverse_. Consider the set of numbers from $1$ to $p - 1$. Every number $a$ has a multiplicative inverse ($a^(p-2)$) modulo $p$; The set contains an identity element ($1$); Multiplication is associative ($a dot (b dot c) = (a dot b) dot c$); And each multiplication will always result in a number between $1$ to $p - 1$ since it is performed modulo $p$ (closure). These properties, existence of an identity element and inverses, associativity, and the closure of operations, are exactly the properties that define a group @shemanske_modern_2017[pp.~73-76].
+Thus, under multiplication modulo $p$, any non-zero integer $a$ multiplied by $a^(p-2)$ results in $1$. As $1$ is the multiplicative identity ($1 dot x = x$), $a^(p-2)$ is said to be $a$'s _multiplicative inverse_. Consider the set of numbers from $1$ to $p - 1$. Every number $a$ has a multiplicative inverse ($a^(p-2)$) modulo $p$; the set contains an identity element ($1$); multiplication is associative ($a dot (b dot c) = (a dot b) dot c$); and each multiplication will always result in a number between $1$ to $p - 1$ since it is performed modulo $p$ (closure). These properties, existence of an identity element and inverses, associativity, and the closure of operations, are exactly the properties that define a group @shemanske_modern_2017[pp.~73-76].
 
-A group is, at its core, a set. Therefore, the $in$ symbol and the word _element_ applies to groups as well. We will refer to the specific group we discussed above as $ZZ_p^times$. In a similar vein, $ZZ_p^+$ specifies addition modulo $p$ as its group operation.
+A group is, at its core, a set equipped with an operation. Therefore, the $in$ symbol and the word _element_ applies to groups as well. We will refer to the specific group we discussed above as $ZZ_p^times$. In a similar vein, $ZZ_p^+$ specifies addition modulo $p$ as its group operation.
 
 The _order_ of a group refers to the number of elements in that group. For $ZZ_p^times$, the order is $p - 1$ since the elements are $1, 2, ..., p - 1$. Using notation, we write $|ZZ_p^times| = p - 1$. The additive group includes zero as the identity, therefore $|ZZ_p^+| = p$.
 
-The _order_ of a specific element $x$, refers to the smallest integer $k$ such that $x^k = 1$, where $1$ is the identity element. For example, the order of $17$ in $ZZ_1009^times$ is $1008$, because $a = 1008$ is the smallest $a$ such that $17^a=1$, whereas the order of $2$ in the same group is $504$, since $b = 504$ is the smallest $b$ such that $2^b = 1$ . Therefore, we have $|17| = 1008$ and $|2| = 504$.
+The _order_ of a specific element $x$, refers to the smallest integer $k$ such that $x^k = 1$, where $1$ is the identity element. For example, the order of $17$ in $ZZ_1009^times$ is $1008$, because $a = 1008$ is the smallest $a$ such that $17^a equiv 1 " " (mod 1009)$, whereas the order of $2$ in the same group is $504$, since $b = 504$ is the smallest $b$ such that $2^b equiv 1 " " (mod 1009)$ . Therefore, we have $|17| = 1008$ and $|2| = 504$.
 
 == The Discrete Log Problem
 
-Under a specific group $ZZ_1009^times$, we are asked to find an integer $n$ for which $17^n = 24$. In this case,
+Under a specific group $ZZ_1009^times$, we are asked to find the smallest integer $n$ for which $17^n equiv 24$. In this case,
 
 $
 17^(456) equiv 24 " " (mod 1009)
 $
 
-Therefore $n = 456$ is the solution to this question. More generally, the discrete log problem (DLP) asks for a smallest exponent $n$ in a group $g$ and $a, b in g$ such that
+And $456$ is the first exponent for which the expression holds. Therefore $n = 456$ is the solution to this question. More generally, the discrete log problem (DLP) asks for a smallest exponent $n$ in a group $g$ and $a, b in g$ such that
 
 $
 a^n = b
@@ -116,9 +110,9 @@ $
 Is it possible for us to find $17^(a b)$? If we know the value of $a = 123$, we can raise $24$ to $123$.
 
 $
-17^b = 24\
+17^b equiv 24\
 a = 123\
-17^(a b) = (17^b)^a = 24^123 = 578
+17^(a b) equiv (17^b)^a equiv 24^123 equiv 578
 $
 
 More generally, if we know $17^a$ and the exponent $b$, or if we know $17^b$ and the exponent $a$, it would be possible for us to know $17^(a b)$. However, given just $17^a$ and $17^b$, there is no trivial way to find the answer.
@@ -428,7 +422,7 @@ $
 
 With verification, we indeed have $1277P = Q$, and we can then calculate $1277R = (8156, 1546)$ in order to find the shared secret on the example above.
 
-#figure(image("Pollard_rho_cycle.svg"), caption: [Diagram from @_pollard_2021, a visual explanation for the name ($rho$) of the algorithm])
+#figure(image("Pollard_rho_cycle.svg", width:60%), caption: [Diagram from @_pollard_2021, a visual explanation for the name ($rho$) of the algorithm])
 
 Therefore, Pollard's $rho$ operates with the following steps:
 
