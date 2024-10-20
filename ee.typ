@@ -52,7 +52,11 @@ Diffie-Hellman Key Exchange is designed specifically so that people can establis
 
 Diffie-Hellman takes on different forms. There is Finite Field Diffie-Hellman and Elliptic Curve Diffie-Hellman. To answer our research question, we'll compare the two methods in terms of how efficient they are (how much data does Alice and Bob need to send to each other?) and how fast they are (how quickly can Alice and Bob calculate the shared password in an exchange?) to show the effectiveness of elliptic curves.
 
+#pagebreak()
+
 = Group Theory
+
+As much of the math required to understand elliptic curves and how they help in establishing shared secrets builds upon group theory, we discuss some notation and concepts used in the cryptographic methods we will be using.
 
 == $ZZ_p^times$: The Multiplicative Group Over a Prime
 
@@ -76,15 +80,17 @@ The _order_ of a group refers to the number of elements in that group. For $ZZ_p
 
 The _order_ of a specific element $x$, refers to the smallest integer $k$ such that $x^k = 1$, where $1$ is the identity element. For example, the order of $17$ in $ZZ_1009^times$ is $1008$, because $a = 1008$ is the smallest $a$ such that $17^a equiv 1 " " (mod 1009)$, whereas the order of $2$ in the same group is $504$, since $b = 504$ is the smallest $b$ such that $2^b equiv 1 " " (mod 1009)$ . Therefore, we have $|17| = 1008$ and $|2| = 504$.
 
+The order of groups and specific elements are used in analyzing and comparing the difficulty of any third-party breaking the cryptography and obtaining a shared secret secured with group operations.
+
 == The Discrete Log Problem
 
-Under a specific group $ZZ_1009^times$, we are asked to find the smallest integer $n$ for which $17^n equiv 24$. In this case,
+Under $ZZ_1009^times$, we are asked to find the smallest integer $n$ for which $17^n equiv 24$. In this case,
 
 $
 17^(456) equiv 24 " " (mod 1009)
 $
 
-And $456$ is the first exponent for which the expression holds. Therefore $n = 456$ is the solution to this question. More generally, the discrete log problem (DLP) asks for a smallest exponent $n$ in a group $g$ and $a, b in g$ such that
+And $456$ is the first exponent for which the equivalence holds. Therefore $n = 456$ is the solution to this question. More generally, the discrete log problem (DLP) asks for a smallest exponent $n$ in a group $g$ and $a, b in g$ such that
 
 $
 a^n = b
