@@ -44,7 +44,7 @@ Much of cryptography is developed on the need to communicate messages securely i
 
 #figure(image("Safe.svg", width: 70%), caption: [Diagram by author, derived from @pdclipartorg_safe_2009.])
 
-Under an analogy using safes, if Alice and Bob both know a secret combination, they can send each other secret messages within safes configured with that combination which protects their messages from being inspected by anyone else. Symmetric cryptography is then concerned with the mathematical processes that can be used to construct such a safe.
+Under an analogy using safes, if Alice and Bob both know a secret combination number, they can send each other secret messages within safes configured with that combination which protects their messages from being inspected by anyone else. Symmetric cryptography is then concerned with the mathematical processes that can be used to construct such a safe.
 
 Diffie-Hellman arises from a need for Alice and Bob to quickly agree on a combination to use even if their own form of communication is one that can be eavesdropped by third parties like Eve @just_diffiehellman_2005. This is at the core of applications such as securing Internet connections, since visitors of a website should not be forced to physically visit a company in order to establish some secret key for communication, but communication through the Internet without encryption provided by cryptography would be insecure.
 
@@ -98,17 +98,17 @@ $
 
 The brute-force approach to this problem would be repeatedly performing the group multiplication, calculating $a^2$, $a^3$, $a^4$ and checking if any of them matches $b$. In the example problem, it would take $455$ multiplications before finally arriving at the answer. If we tried to solve questions of this kind repeatedly with the exponent $n$ taken at random, brute-forcing would take on average $1/2|a|$ operations since answers are in the range of $0$ to $|a| - 1$. As the order $|a|$ gets big (towards numbers as big as $2^200$), this approach quickly becomes infeasible.
 
-Cryptographic techniques are, then, built upon the assumption that the Discrete Log Problem is non-trivial to solve.
+Assuming that the Discrete Log Problem is non-trivial to solve, exponentiation of elements in $ZZ_n^times$ can be characterized as a one-way function, where computing exponentiation is trivial, but finding the discrete log (the inverse) is much more difficult @robshaw_one-way_2011. Building upon this property, we will show how it can be used to ensure information reaches the right person with cryptography. // TODO sit on whether to talk about exponentiation too
 
 = Finite Field Cryptography and Attacks
 
-A field is a set that forms a group under addition, forms a group under multiplication with the zero removed, and where multiplication is distributive: $a(b + c) = a b + a c$ @kaliski_field_2011@kaliski_ring_2011.
+A field is a set that forms a group under addition, forms a group under multiplication with non-zero elements, and where multiplication is distributive: $a(b + c) = a b + a c$ @kaliski_field_2011@kaliski_ring_2011.
 
 As it turns out, all fields with the same finite order $q$ can be mapped to each other while preserving their structure (i.e. _finite fields_ with equal order are all _isomorphic_). Therefore any finite field with prime order $p$ is isomorphic to the field of integers modulo $p$. We write it as $FF_p$, and use $FF_p^times$ to explicitly refer to the multiplicative subgroup (equivalent to $ZZ_p^times$ used above) @kaliski_finite_2011.
 
 == Diffie-Hellman Key Exchange
 
-Building off the previous example, suppose we're given the numbers $407$ and $24$, which are both exponents of $17$ in $FF_1009^times$. Assume $
+Building off the previous example, suppose we're given the numbers $17$, $407$ and $24$ in $FF_1009^times$. Assume $
 17^a equiv 407  " " (mod 1009)\
 17^b equiv 24 " " (mod 1009)
 $
@@ -224,13 +224,25 @@ This method relies on prime factorizations always existing for integers, which i
 
 For the example above, we examined exponents of $17$ up to $17^36$, and also computed $17 dot 24$ and $17^2 dot 24$. This took significantly less time than enumerating $17^n$ for all $n$ until we reach 456. Therefore, Index Calculus is much more efficient than brute-forcing.
 
-An improved method called General Number Field Sieve, based on the idea of reducing discrete logarithm problems to systems of linear equations in Index Calculus, is more efficient than simple index calculus for large primes @nguyen_index_2005. The number of operations expected for the GNFS algorithm can be written as @lenstra_l-notation_2005:
+An improved method called General Number Field Sieve, based on the idea of reducing discrete logarithm problems to systems of linear equations in Index Calculus, is more efficient than simple index calculus for large primes @nguyen_index_2005. The expected running time for the GNFS algorithm is proportional to @lenstra_l-notation_2005:
 
 $
 exp((64\/9)^(1\/3)(ln p)^(1\/3)(ln ln p)^(2\/3))
 $
 
-where $p$ is the prime that defines the finite field in $FF_p$. For a field with $p = 2^2048$, the expected running time for GFNS to solve the Discrete Log would take about $1.5 dot 10^35 approx 2^117$ operations. In later sections, we will take a look at Diffie-Hellman done on elliptic curves and how the number of operations needed to solve the discrete log problem on elliptic curves compares with Diffie-Hellman on finite fields.
+where $p$ is the prime that defines the finite field in $FF_p$. Assuming that for $p = 3$ the GFNS runs in one nanosecond or $10^(-9)$ second,solving the Discrete Log for $p = 2^2048$ with GFNS would take about
+
+$
+exp((64\/9)^(1\/3)(ln 2^2048)^(1\/3)(ln ln 2^2048)^(2\/3))/exp((64\/9)^(1\/3)(ln 3)^(1\/3)(ln ln 3)^(2\/3)) dot 10^(-9) approx 1.02 dot 10^26 "seconds"
+$
+
+or
+
+$
+1.02 dot 10^26 dot 1/60 dot 1/60 dot 1/24 dot 1/365.2425 = 3.22 dot 10^18 "years"
+$
+
+In later sections, we will take a look at Diffie-Hellman done on elliptic curves and how the time needed to solve the discrete log problem on elliptic curves compares with Diffie-Hellman on finite fields.
 
 = Elliptic Curve Cryptography
 
@@ -282,7 +294,7 @@ $
 With the same line equation $y = m(x - x_1) + y_1$, with the same expanded formula:
 
 $
-x^3 - m^2 x^2 + ... = 0
+x^3 - m^2 x^2 + (2m^2 x_1 - 2y_1m + A)x + 2y_1 m x_1 - m^2 x_1^2 - y_1 = 0
 $
 
 But this time, $x_1$ is a repeated root, as a tangent line either touches no other points at all (the case when $y = 0$) or touch one other point.
@@ -308,22 +320,26 @@ $
 Where $bold(0)$ is the "point at infinity". We now show that $E(C)$ forms a group.
 
 
-#figure(image("ECClines-2.svg"), caption: [Diagram from @supermanu_ecclines-2_2007, an illustration of the group operation defined on elliptic curves])
+#figure(image("ECClines-2.svg"), caption: [Diagram from @supermanu_ecclines-2_2007, an illustration of the group operation defined on elliptic curves]) <illust>
 
-Let $P_1 = (x_1, y_1)$ and $P_2 = (x_2, y_2)$ be two points that are on the curve. Define $P_3 = P_1 + P_2$ to be as follows:
+Let $P$ and $Q$ be two points from $E(C)$. Define $+$ to be as follows:
 
-- If $P_1 = P_2 = (x_1, 0)$, let $P_3 = bold(0)$.
-- If $P_1 = P_2 = (x_1, y_1)$ where $y_1 != 0$, let $
-
-P_3 = (m^2 - 2x_1, m(x_1-x_3)-y_1), "where " m = (3x_1^2 + A)/(2y_1)
-
+- If $P = Q = (x, 0)$, let $P + Q = bold(0)$. (\#4 from @illust)
+- If $P = Q = (x, y)$ where $y != 0$ (\#2 from @illust), let
 $
-- If $x_1 = x_2$ but $y_1 != y_2$ (if and only if $y_1 = -y_2$): let $P_3 = bold(0)$.
-- Otherwise, let $
-P_3 = (m^2 - x_1 - x_2, m(x_1-x_3)-y_1), "where " m = (y_2-y_1)/(x_2-x_1)
+m = (3x^2 + A)/(2y)\
+x_3 = m^2 - 2x\
+P + Q = (x_3, m(x-x_3)-y)
 $
-
-Additionally, define $P_1 + bold(0) = bold(0) + P_1 = P_1$, as well as $bold(0) + bold(0) = bold(0)$.
+- If $P = (x, y_1), Q = (x, y_2)$ where $y_1 != y_2$ (\#3 from @illust): let $P + Q = bold(0)$.
+- If $P = (x_1, y_1), Q = (x_2, y_2)$ (\#1 from @illust), let
+$
+m = (3x^2 + A)/(2y)\
+x_3 = m^2 - x_1 - x_2\
+P + Q = (x_3, m(x_1-x_3)-y_1)
+$
+- If $Q = bold(0)$, $P + Q = P$.
+- If $P = bold(0)$, $P + Q = Q$.
 
 == Proof of Associativity
 
@@ -380,7 +396,7 @@ Elliptic curve operations and modular multiplicative group operations differ in 
 
 With that note, Diffie-Hellman in elliptic curves follows the exact same procedure: two parties agree on a curve group to use, then decide on a base point $P$. Alice generates a secret integer $a$ and sends Bob $a P$. Bob generates a secret integer $b$ and sends Alice $b P$. They can now both calculate $a b P$, which cannot be known by third parties unless they can solve the discrete log problem in elliptic curves.
 
-A short example is as follows: Alice and Bob agrees to use the curve $y^2 = x^3 + 6692x + 9667$ in $FF_10037$, with the base point $P = (3354, 7358)$ (from @silverman_rational_2015[p.~164]). Alice generates $a = 1277$ and sends $Q = a P = (5403, 5437)$ to Bob. Bob generates $b = 1337$ and sends $R = b P = (7751, 1049)$ to Alice.\ Alice calculates $a R = a b P = (8156, 1546)$, and bob calculates $b Q = b a P = (8156, 1546)$ as their shared secret.
+A short example is as follows: Alice and Bob agrees to use the curve $y^2 = x^3 + 6692x + 9667$ in $FF_10037$, with the base point $P = (3354, 7358)$ (from @silverman_rational_2015[p.~164]). Alice generates $a = 1277$ and sends $Q = a P = (5403, 5437)$ to Bob. Bob generates $b = 1337$ and sends $R = b P = (7751, 1049)$ to Alice.\ Alice calculates $a R = a b P = (8156, 1546)$, and Bob calculates $b Q = b a P = (8156, 1546)$ as their shared secret.
 
 To figure out this shared secret, Eve could try to break the discrete log for $Q = a P$.
  
@@ -445,7 +461,7 @@ And then $k$ can be solved through $c$ and $d$ based on $|P|$.
 
 = Evaluation
 
-Pollard's $rho$ algorithm on elliptic curve groups works on average with $sqrt(pi/4 N)$ elliptic curve additions with $N = |P|$ @bernstein_correct_2011. On the other hand, the general number field sieve takes about $exp((64\/9)^(1\/3)(ln p)^(1\/3)(ln ln p)^(2\/3))$ operations in a prime field with order $p$. Assigning real numbers to these expressions, we can evaluate the current industry standards for cryptography.
+Pollard's $rho$ algorithm on elliptic curve groups works on average with $sqrt(pi/4 N)$ elliptic curve additions with $N = |P|$ @bernstein_correct_2011. On the other hand, the general number field sieve's running time scales with $exp((64\/9)^(1\/3)(ln p)^(1\/3)(ln ln p)^(2\/3))$ in a prime field with order $p$. Assigning real numbers to these expressions, we can evaluate the current industry standards for cryptography.
 
 == Diffie-Hellman in TLS 1.3
 
@@ -489,6 +505,6 @@ Both of these advantages can be seen from the fact that the Discrete Log Problem
 
 = Conclusion
 
-Elliptic Curve Cryptography offers a much better alternative to other existing cryptographic methods for establishing secrets through an insecure channel. This is partly because of the difficulty of the Discrete Log Problem for elliptic curves compared to other groups, which allows it to provide the same level of security while being more efficient. Compared to Finite Field Diffie-Hellman, using Elliptic Curves takes us as 8 times less memory, and performs about 13 times faster.
+Elliptic Curve Cryptography offers a much better alternative to other existing cryptographic methods for establishing secrets through an insecure channel. This is partly because of the difficulty of the Discrete Log Problem for elliptic curves compared to other groups, which allows it to provide the same level of security while being more efficient. Using Elliptic Curves takes 8 times less memory than Finite Fields for Diffie-Hellman, and performs about 13 times faster.
 
 #bibliography("shortlist.bib")
