@@ -1,6 +1,6 @@
 #import "@preview/cetz:0.2.2"
 #import "@preview/wordometer:0.1.2": word-count, total-words
-#show par: set par(spacing: 1.5em)
+#show par: set block(spacing: 1.5em)
 #set par(
   justify: true,
   leading: 0.75em
@@ -37,7 +37,7 @@ Word count: #show: word-count.with(exclude: (heading, figure.caption))
 
 As Alice tries to talk to Bob through her laptop, an adversary named Eve tries to eavesdrop their communication and steal sensitive information. Alice and Bob decide to use Diffie-Hellman Key Exchange, which allows them to establish a password for future communication, one that Eve cannot obtain even if she can intercept everything transmitted.
 
-Diffie-Hellman is an important element in the collection of cryptographic methods that bullet-proof Internet connections. 99.3% of the top 1 million websites prefer using Diffie-Hellman over others when it comes to establishing a shared secret @warburton_2021_2021.
+Diffie-Hellman is an important element in the collection of cryptographic methods that secure Internet connections. 99.3% of the top 1 million websites prefer using Diffie-Hellman over others when it comes to establishing a shared secret @warburton_2021_2021.
 
 Much of cryptography is developed on the need to communicate messages securely in that other people cannot know what messages are being sent. Password-based, or _symmetric_ cryptography uses a secret key known between two parties to communicate messages safely @sako_public_2005. 
 
@@ -45,7 +45,7 @@ Much of cryptography is developed on the need to communicate messages securely i
 
 Under an analogy using safes, if Alice and Bob both know a secret combination number, they can send each other secret messages within safes configured with that combination, protecting their messages from being inspected by anyone else. Symmetric cryptography is then concerned with the mathematical processes that can be used to construct such a safe.
 
-Diffie-Hellman arises from a need for Alice and Bob to quickly agree on a combination to use even if their own form of communication is one that can be eavesdropped by third parties like Eve @just_diffiehellman_2005. This is at the core of applications including securing Internet connections, since visitors of a website should not be forced to physically visit a company in order to establish some secret key for communication. Diffie-Hellman Key Exchange is designed specifically so that people can establish a shared secret (the combination between Alice and Bob) over an insecure channel (a communication method that Eve can eavesdrop).
+Diffie-Hellman arises from a need for Alice and Bob to quickly agree on a combination to use even if their own form of communication is one that can be eavesdropped by third parties like Eve @just_diffiehellman_2005. This is at the core of  securing Internet connections, since visitors of a website should not be forced to physically visit a company in order to establish a secret key for communication. Diffie-Hellman is designed specifically so that people can establish a shared secret (the combination between Alice and Bob) over an insecure channel (a communication method that Eve can eavesdrop).
 
 Diffie-Hellman takes on different forms. There is Finite Field Diffie-Hellman and Elliptic Curve Diffie-Hellman. To answer our research question, we'll compare the two methods in terms of how efficient they are (how much data do Alice and Bob need to send to each other?) and how fast they are (how quickly can Alice and Bob calculate the shared password in an exchange?) to show the effectiveness of elliptic curves.
 
@@ -53,7 +53,7 @@ Diffie-Hellman takes on different forms. There is Finite Field Diffie-Hellman an
 
 = Group Theory
 
-Much of the math required to understand elliptic curves and how they help in establishing shared secrets utilizes group theory. This section is a short discussion on it.
+Much of the math required to understand elliptic curves and how they help establish shared secrets utilizes group theory. This section is a short discussion on it.
 
 == $ZZ_p^times$: The Multiplicative Group Over a Prime
 
@@ -71,13 +71,13 @@ $
 
 Thus, under multiplication modulo $p$, any non-zero integer $a$ multiplied by $a^(p-2)$ results in $1$. As $1$ is the multiplicative identity ($1 dot x = x$), $a^(p-2)$ is said to be $a$'s _multiplicative inverse_. Consider the set of numbers from $1$ to $p - 1$. Every number $a$ has a multiplicative inverse ($a^(p-2)$) modulo $p$; the set contains an identity element ($1$); multiplication is associative ($a dot (b dot c) = (a dot b) dot c$); and each multiplication will always result in a number between $1$ to $p - 1$ since it is performed modulo $p$ (closure). These properties, existence of an identity element and inverses, associativity, and the closure of operations, are exactly the properties that define a group @shemanske_modern_2017[pp.~73-76].
 
-A group is a set equipped with an operation. Therefore, the $in$ symbol and the word _element_ applies to groups as well. We will refer to the specific group we discussed above as $ZZ_p^times$. In a similar vein, $ZZ_p^+$ specifies addition modulo $p$ as its group operation.
+A group is a set equipped with an operation. Therefore, the $in$ symbol and the word _element_ applies to groups too. We will refer to the specific group we discussed above as $ZZ_p^times$. In a similar vein, $ZZ_p^+$ specifies addition modulo $p$ as its group operation.
 
-The _order_ of a group refers to the number of elements in that group. For $ZZ_p^times$, the order is $p - 1$ since its elements are $1, 2, ..., p - 1$. We write $|ZZ_p^times| = p - 1$. The additive group includes zero as the identity, therefore $|ZZ_p^+| = p$.
+The _order_ of a group refers to the number of elements in that group. For $ZZ_p^times$, the order is $p - 1$ since its elements are $1, 2, ..., p - 1$. Hence $|ZZ_p^times| = p - 1$. The additive group includes zero as the identity, therefore $|ZZ_p^+| = p$.
 
-The _order_ of a specific element $x$, refers to the smallest integer $k$ such that $x^k = 1$, where $1$ is the identity element. For example, the order of $17$ in $ZZ_1009^times$ is $1008$, because $a = 1008$ is the smallest $a$ such that $17^a equiv 1 " " (mod 1009)$, whereas the order of $2$ in the same group is $504$, since $b = 504$ is the smallest $b$ such that $2^b equiv 1 " " (mod 1009)$ . Therefore, $|17| = 1008$ and $|2| = 504$.
+The _order_ of a specific element $x$, refers to the smallest integer $k$ such that $x^k = 1$, where $1$ is the identity element. For example, the order of $17$ in $ZZ_1009^times$ is $1008$, because $a = 1008$ is the smallest $a$ such that $17^a equiv 1 " " (mod 1009)$, whereas the order of $2$ in $ZZ_1009^times$ is $504$, since $b = 504$ is the smallest $b$ such that $2^b equiv 1 " " (mod 1009)$ . Therefore, $|17| = 1008$ and $|2| = 504$.
 
-As groups are used extensively in cryptographic techniques, the order of groups and elements become important as they are related to the difficulty of obtaining a shared secret secured using specific groups and elements.
+As groups are used extensively in cryptographic techniques, the order of groups and elements becomes important as it is related to the difficulty of obtaining a shared secret secured using specific groups and elements.
 
 == The Discrete Log Problem
 
@@ -87,13 +87,9 @@ $
 17^(456) equiv 24 " " (mod 1009)
 $
 
-And $456$ is the first exponent for which the equivalence holds. Therefore $n = 456$ is the solution. More generally, the discrete log problem (DLP) asks for a smallest exponent $n$ in a group $G$ and $a, b in G$ such that
+And $456$ is the first exponent for which the equivalence holds. Therefore $n = 456$ is the solution. More generally, the discrete log problem (DLP) asks for a smallest exponent $n$ in a group $G$ and $a, b in G$ such that $a^n = b$.
 
-$
-a^n = b
-$
-
-The brute-force approach to this problem would be repeatedly performing the group multiplication, calculating $a^2$, $a^3$, $a^4$ and checking if any of them matches $b$. In the example problem, it would take $455$ multiplications before finally arriving at the answer. If we tried to solve questions of this kind repeatedly with the exponent $n$ taken at random, brute-forcing would take on average $1/2|a|$ operations since answers are in the range of $0$ to $|a| - 1$. As the order $|a|$ gets big (towards numbers as big as $2^200$), this approach quickly becomes infeasible.
+The brute-force approach to this problem would be repeatedly performing the group multiplication, calculating $a^2$, $a^3$, $a^4$ and checking if any of them matches $b$. In the example problem, it would take $455$ multiplications before finally arriving at the answer. If we tried to solve DLP repeatedly with the exponent $n$ taken at random, brute-forcing would take on average $1/2|a|$ operations since answers are in the range of $0$ to $|a| - 1$. As the order $|a|$ gets big (towards numbers as big as $2^200$), this approach quickly becomes infeasible.
 
 Assuming that DLP is non-trivial to solve, exponentiation of elements in $ZZ_n^times$ can be characterized as a one-way function, where computing exponentiation is trivial, but finding the discrete log (the inverse) is much more difficult @robshaw_one-way_2011. Building upon this property, we will show how it can be used to ensure information reaches the right person with cryptography.
 
@@ -106,7 +102,7 @@ Building off the previous example, suppose we're given the numbers $17$, $407$ a
 17^b equiv 24 " " (mod 1009)
 $
 
-Is it possible for us to find $17^(a b)$? If we know $a = 123$, we can raise $24$ to $123$.
+Can we find $17^(a b)$? If we know $a = 123$, we can raise $24$ to $123$.
 
 $
 17^b equiv 24" " (mod 1009)\
@@ -129,13 +125,13 @@ Consider the following case within $ZZ_1009^times$ where anything sent between A
 #figure(image("Diffie-Hellman.svg", width: 80%), caption: [Diagram by author, a description of the Diffie-Hellman Key Exchange process.])
 
 
-To generalize, the Diffie-Hellman Key Exchange utilizes the difficulty of the Diffie-Hellman problem. Under an agreed upon group $G$ and base $x in G$, Alice and Bob can establish a shared secret. Alice can generate an exponent $a$ and send Bob $x^a$, while Bob can generate a secret exponent $b$ and send Alice $x^b$. Together, they can both compute $x^(a b)$ as their shared secret securely, even if Eve is able to intercept this communication.
+To generalize, the Diffie-Hellman Key Exchange utilizes the difficulty of the Diffie-Hellman problem. Under an agreed upon group $G$ and base $x in G$, Alice and Bob can establish a shared secret. Alice can generate a secret exponent $a$ and send Bob $x^a$, while Bob can generate a secret exponent $b$ and send Alice $x^b$. Together, they can both compute $x^(a b)$ as their shared secret securely, even if Eve is able to intercept this communication.
 
 The specific example was done in $ZZ_1009^times$. In reality, the size of the group will be much larger to prevent anyone from trivially breaking the exchange and finding the secret @friedl_diffie-hellman_2006@velvindron_increase_2017. The more general technique of performing Diffie-Hellman on the group of multiplication modulo a prime is called Finite Field Diffie-Hellman. We first consider one way to break this, and afterwards show that elliptic curves would take more effort to break.
 
 == Index Calculus
 
-Diffie-Hellman Key Exchange on Finite Fields normally uses groups $ZZ_p^times$ where $2^2048 < p < 2^8192$ @friedl_diffie-hellman_2006@velvindron_increase_2017. The large size of the prime ensures that solving DLP is inefficient. For smaller finite fields, the Diffie-Hellman Key Exchange is less secure because DLP can be solved faster using Index Calculus.
+Diffie-Hellman Key Exchange with modular multiplication normally uses groups $ZZ_p^times$ where $2^2048 < p < 2^8192$ @friedl_diffie-hellman_2006@velvindron_increase_2017. The large size of the prime ensures that solving DLP is inefficient. For smaller groups, the Diffie-Hellman Key Exchange is less secure because DLP can be solved faster using Index Calculus.
 
 Let's solve the following:
 
@@ -151,14 +147,13 @@ $
 
 Therefore, our goal is to find $L(24)$.
 
-Note that when we have
+#pagebreak()
+
+With
 
 $
-17^(L(x) + L(y)) equiv 17^(L(x)) times 17^(L(y)) equiv x y equiv 17^(L(x y))" (mod 1009)"
-$
-
-So then $
-17^(L(x) + L(y) - L(x y)) equiv 1" (mod 1009)"
+17^(L(x) + L(y)) equiv 17^(L(x)) dot 17^(L(y)) equiv x y &equiv 17^(L(x y))&" (mod 1009)"\
+17^(L(x) + L(y)) dot 17^(-L(x y)) equiv 17^(L(x) + L(y) - L(x y)) &equiv 1&" (mod 1009)"
 $
 
 Since $|17| = 1008$, we have (notice the change in modulus)
@@ -193,8 +188,7 @@ $
 There are six unknowns $L(2), L(3), L(5), L(7), L(11), L(13)$ and six congruences, using linear algebra methods, we can arrive at the solution
 
 $
-L(2) = 646, L(3) = 534, L(5) = 886,\
-L(7) = 380, L(11) = 697, L(13) = 861
+L(2) = 646, L(3) = 534, L(5) = 886, L(7) = 380, L(11) = 697, L(13) = 861
 $
 
 Next, the idea is to find $17^x dot 24$ for some $x$ that can factorize over primes up to 13. (Note that $x = 0$ works here since $24$ can be easily factorized, but in most cases it won't) Indeed, we have $17^2 dot 24 equiv 2 dot 3^2 dot 7^2" (mod 1009)"$, so then we have
@@ -210,16 +204,16 @@ We arrive at the answer $n = 456$.
 
 #pagebreak()
 
-Index Calculus finds $n$ in $a^n equiv b" (mod "p")"$ @washington_elliptic_2008[pp.~144-146] with this procedure:
+Index Calculus finds $n$ in $a^n equiv b" (mod " p")"$ @washington_elliptic_2008[pp.~144-146] with this procedure:
 
 - Find $a^i$ for various $i$ that can be factorized with small primes up to a certain limit (in our example, the factor base was up to $13$).
 - Solve $L(p_n)$ for these small primes with system of equations.
 - Calculate $a^x dot b$ for various $x$ until it can be factored with our factor base. Then find $L(b)$ by the following procedure:
 
 $
-a^x dot b equiv p_1^c_1 dot p_2^c_2 dot ... dot p_n^c_n" (mod "p")"\
-x + L(b) equiv c_1 L(p_1) + c_2 L(p_2) + ... + c_n L(p_n)" (mod "|a|")"\
-L(b) equiv -x + c_1 L(p_1) + c_2 L(p_2) + ... + c_n L(p_n)" (mod "|a|")"
+a^x dot b equiv p_1^c_1 dot p_2^c_2 dot ... dot p_n^c_n" (mod " p")"\
+x + L(b) equiv c_1 L(p_1) + c_2 L(p_2) + ... + c_n L(p_n)" (mod " |a|")"\
+L(b) equiv -x + c_1 L(p_1) + c_2 L(p_2) + ... + c_n L(p_n)" (mod " |a|")"
 $
 
 This method relies on prime factorizations always existing for integers, which in general does not apply to ellpitic curve points @washington_elliptic_2008[pp.~154-157].
@@ -232,7 +226,7 @@ $
 exp((64\/9)^(1\/3)(ln p)^(1\/3)(ln ln p)^(2\/3))
 $
 
-where $p$ is the prime that defines the finite field in $FF_p$. Assuming that for $p = 3$ the GNFS runs in one nanosecond or $10^(-9)$ seconds, solving DLP for $p = 2^2048$ with GNFS would take about
+where $p$ is the prime that defines the group $ZZ_p^times$. Assuming that for $p = 3$ the GNFS runs in one nanosecond or $10^(-9)$ seconds, solving DLP for $p = 2^2048$ with GNFS would take about
 
 $
 exp((64\/9)^(1\/3)(ln 2^2048)^(1\/3)(ln ln 2^2048)^(2\/3))/exp((64\/9)^(1\/3)(ln 3)^(1\/3)(ln ln 3)^(2\/3)) dot 10^(-9) approx 1.02 dot 10^26 "seconds"
@@ -322,10 +316,10 @@ $
 
 We can then develop a group law for points on elliptic curves. For special cases, such as adding two points on a vertical line, a "point at infinity" is added to the normal set of points on the curve, so that the group is well-defined for operations for all elements. This is studied more rigorously in projective geometry, though we incorporate this concept for simply defining the group law on elliptic curves @washington_elliptic_2008[p.~11].
 
-For an elliptic curve $C: y^2 = x^3 + A x + B$ we define the following set:
+For an elliptic curve $C: y^2 = x^3 + A x + B$ over a field $FF$ we define the following set:
 
 $
-E(C) = {bold(0)} union {(x, y) | y^2 = x^3 + A x + B}
+E(C) = {bold(0)} union {(x, y) | y^2 = x^3 + A x + B, #h(6pt) x,y in FF}
 $
 
 Where $bold(0)$ is the "point at infinity". We now show that $E(C)$ forms a group.
@@ -343,6 +337,7 @@ x_3 = m^2 - 2x_1\
 P + Q = (x_3, m(x_1-x_3)-y_1)
 $
 - If $P = (x_1, y_1), Q = (x_2, y_2)$ where $x_1 = x_2, y_1 != y_2$ (\#3 from @illust): let $P + Q = bold(0)$.
+#pagebreak()
 - If $P = (x_1, y_1), Q = (x_2, y_2)$ (\#1 from @illust), let
 $
 m = (y_2 - y_1)/(x_2 - x_1)\
@@ -364,17 +359,17 @@ $
 
 Therefore, an elliptic curve $x^3 + A x + B - y^2 = 0$ is a cubic space curve. The union of three lines $ (y - (m_1 x + b_1))(y - (m_2 x + b_2))(y - (m_3 x + b_3)) = 0 $ is also a cubic space curve.
 
-A consequence of Bézout's theorem is that two cubic space curves intersect at 9 points. The nine points could include the point at infinity in projective geometry, counts multiplicities as more than one point of intersection such as when at a tangent, and allows complex numbers as coordinates. For simplicity, the proof ignores these technicalities.
+A consequence of Bézout's theorem is that two cubic space curves intersect at 9 points. The nine points could include the point at infinity in projective geometry, counting multiplicities as more than one point of intersection such as when at a tangent, and allows complex numbers as coordinates. For simplicity, the proof ignores these technicalities.
 
 *Proposition:*
 Let $C$, $C_1$, $C_2$ be cubic space curves. Suppose $C$ goes through eight of the nine intersection points between $C_1$ and $C_2$. Then $C$ also goes through the ninth intersection point.
 
 
-*Proof:* A total of 10 coefficients were used in the formula for a cubic space curve: $a, b, c, d, e, f, g, h, i, j$. Since scaling the equation by a linear factor results in the same curve, the curve can be said to be constrained by nine linear factors, or 9-dimentional. Suppose we constrained the curve such that it needs to go through a specific point. The number of linear factors that are allowed to vary would be decreased by one (similar to interpolating polynomials where adding another point requires a higher degree polynomial, this is in the other direction). If we constrain a cubic curve to go through eight specific points, the number of linear factors that are free to vary would be $9 - 8 = 1$. In other words, the set of all cubic curves that go through eight specific points is one-dimensional.
+*Proof:* A total of 10 coefficients were used in the formula for a cubic space curve: $a, b, c, d, e, f, g, h, i, j$. Since scaling the equation by a linear factor results in the same curve, the curve can be said to be constrained by nine linear factors, or 9-dimensional. Suppose we constrained the curve such that it needs to go through a specific point. The number of linear factors that are allowed to vary would be decreased by one (similar to interpolating polynomials where adding another point requires a higher degree polynomial, this is in the other direction). If we constrain a cubic curve to go through eight specific points, the number of linear factors that are free to vary would be $9 - 8 = 1$. In other words, the set of all cubic curves that go through eight specific points is one-dimensional.
 
 Let $C_1$ be specified by the equation $F_1(x, y) = 0$ and $C_2$ by $F_2(x, y) = 0$. We know that the set of all possible curves $C$ that go through  eight intersection points between $C_1$ and $C_2$ is one-dimensional.
 
-A linear combination of $F_1$ and $F_2$ results in a cubic space curve that goes through the eight intersection points: $F_3 = lambda_1 F_1 + lambda_2 F_2$ with $F_3(a, b) = 0$ since any intersection point $(a,b)$ will satisfy $F_1(a, b) = F_2(a, b) = 0$. $F_3$ is also free to vary by a single linear factor $lambda_2\/lambda_1$ (accounting for linear scaling) so it represents a one-dimentional family of cubic space curves. Since both $C$ and $F_3$ are one-dimentional, all curves $C$ can be represented with the form $F_3(x, y) = 0$ for some $lambda_1$ and $lambda_2$.
+A linear combination of $F_1$ and $F_2$ results in a cubic space curve that goes through the eight intersection points: $F_3 = lambda_1 F_1 + lambda_2 F_2$ with $F_3(a, b) = 0$ since any intersection point $(a,b)$ will satisfy $F_1(a, b) = F_2(a, b) = 0$. $F_3$ is also free to vary by a single linear factor $lambda_2\/lambda_1$ (accounting for scaling) so it represents a one-dimensional family of cubic space curves. Since both $C$ and $F_3$ are one-dimensional, all curves $C$ can be represented with the form $F_3(x, y) = 0$ for some $lambda_1$ and $lambda_2$.
 
 The ninth intersection point also satisfies $F_3(x, y) = 0$, therefore $C$ must go through the ninth intersection point. $square$
 
@@ -411,7 +406,7 @@ Elliptic curve operations and modular multiplicative group operations differ in 
 
 With that note, Diffie-Hellman in elliptic curves follows the exact same procedure: two parties agree on a curve group to use, then decide on a base point $P$. Alice generates a secret integer $a$ and sends Bob $a P$. Bob generates a secret integer $b$ and sends Alice $b P$. They can now both calculate $a b P$, which cannot be known by third parties unless they can solve the discrete log problem in elliptic curves.
 
-A short example is as follows: Alice and Bob agree to use the curve $y^2 = x^3 + 6692x + 9667$ in $FF_10037$, with the base point $P = (3354, 7358)$ (from @silverman_rational_2015[p.~164]). Alice generates $a = 1277$ and sends $Q = a P = (5403, 5437)$ to Bob. Bob generates $b = 1337$ and sends $R = b P = (7751, 1049)$ to Alice.\ Alice calculates $a R = a b P = (8156, 1546)$, and Bob calculates $b Q = b a P = (8156, 1546)$ as their shared secret.
+A short example is as follows: Alice and Bob agree to use the curve $y^2 = x^3 + 6692x + 9667$ in $FF_10037$, with the base point $P = (3354, 7358)$ (from @silverman_rational_2015[p.~164]). Alice generates $a = 1277$ and sends $Q = a P = (5403, 5437)$ to Bob. Bob generates $b = 1337$ and sends $R = b P = (7751, 1049)$ to Alice. Alice calculates $a R = a b P = (8156, 1546)$, and Bob calculates $b Q = b a P = (8156, 1546)$ as their shared secret.
 
 To figure out this shared secret, Eve could try to break the discrete log for $Q = a P$.
  
